@@ -1,0 +1,58 @@
+class Solution {
+    // sort the strs array in the reverse order
+    // if there is no duplicate strings in strs, then, the longest string is the answer
+    // if there is duplicate in the string and longest string is not the answer, then we should pick up string according to the length, find out if the string is subsequence of other string which is larger than it
+
+    Set<String> duplicate;
+    Set<String> test;
+    public int findLUSlength(String[] strs) {
+        duplicate = new HashSet<>();
+        test = new HashSet<>();
+        Arrays.sort(strs, new Comparator<String>(){
+            public int compare(String o1, String o2)
+            {
+                return o2.length() - o1.length();
+            }
+        });
+
+        getduplicate(strs);
+        for(int i = 0; i < strs.length; i++)
+        {
+            if(!duplicate.contains(strs[i]))
+            {
+                if(i == 0) return strs[0].length();
+                for(int j = 0; j < i; j++)
+                {
+                    if(issubsequence(strs[j], strs[i]))
+                        break;
+                     if(j == i - 1) return strs[i].length();
+                }
+            }
+        }
+        return -1;
+    }
+
+    public boolean issubsequence(String a, String b)
+    {
+        int i = 0, j = 0;
+        while(i < a.length() && j < b.length())
+        {
+            if(a.charAt(i) == b.charAt(j)) j++;
+            i++;
+        }
+
+        return j == b.length();
+    }
+
+    public void getduplicate(String[] strs)
+    {
+        for(String s: strs){
+            if(!test.contains(s))
+                test.add(s);
+            else
+                duplicate.add(s);
+        }
+    }
+
+
+}

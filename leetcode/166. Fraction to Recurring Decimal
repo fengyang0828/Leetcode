@@ -1,0 +1,55 @@
+    // ask the interviewer if we only consider about the recurring decimal
+    // use long to avoid overflow if numerator and denominator is very big
+    // use stringbuilder to store string
+    // focus on the negative and positive's difference
+    // for a decimal: there are only two cases:
+    // if it is recurring decimal, in one loop there will no repeating number
+    (since if there is repeating number in a loop, then the remaining will be same as before,
+    ex: we get 0.27, if we get 2 in next digits, the next will be 7, wo 27 is a loop)
+
+    for the fraction part, we only add the quotient into sb and use remainder to figure out quotient
+
+class Solution {
+    public String fractionToDecimal(int n, int d) {
+        StringBuilder sb = new StringBuilder();
+        if(n == 0) return "0";
+        if((n < 0 && d > 0) || (n > 0 && d < 0))
+            sb.append("-");
+        long numerator = (long) Math.abs((long)n);
+        long denominator = (long) Math.abs((long)d);
+
+        long quotient = numerator / denominator;
+        sb.append(quotient);
+        long remainder = numerator % denominator;
+
+        // if can be divided integerally
+        if(remainder == 0)
+        {
+            return sb.toString();
+        }
+
+        sb.append(".");
+        HashMap<Long, Integer> map = new HashMap<>();
+        map.put(remainder, sb.length());
+        while(remainder != 0)
+        {
+            remainder = remainder * 10;
+            sb.append(remainder / denominator);
+            remainder = remainder % denominator;
+            if(map.containsKey(remainder))
+            {
+                int index = map.get(remainder);
+                sb.insert(index, '(');
+                sb.append(')');
+                break;
+            }
+            else
+            {
+                map.put(remainder, sb.length());
+            }
+        }
+
+        return sb.toString();
+
+    }
+}

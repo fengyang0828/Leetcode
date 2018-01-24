@@ -1,0 +1,58 @@
+#1. 2-D dp
+        // same as the subsequence, we need to use dp
+        // focus on the variable length, which means we focus on how long of the subsequence
+        // for example, we first focus on length 1, to check each substring in wordDict, if contains, then, dp[i][j] = true;
+        // if not contains, we should focus on if the substring can be divided to to the dictionary
+        // 1. can be divided, true;
+        // 2. false
+class Solution {
+    public boolean wordBreak(String s, List<String> wordDict) {
+
+        int len = s.length();
+        boolean[][] dp = new boolean[len][len];
+        for(int l = 1; l <= len; l++)
+        {
+            for(int i = 0; i <= len - l; i++)
+            {
+                int j = i + l - 1;
+                if(wordDict.contains(s.substring(i,j + 1)))
+                {
+                    dp[i][j] = true;
+                }
+                else
+                {
+                    int k;
+                    for(k = i; k <= j; k++)
+                    {
+                        if(dp[i][k] && dp[k + 1][j])
+                        {
+                            dp[i][j] = true;
+                            break;
+                        }
+                    }
+                    if(k > j)
+                        dp[i][j] = false;
+                }
+            }
+        }
+        return dp[0][len - 1];
+
+    }
+}
+
+#2. 1-D
+        int len = s.length();
+        boolean[] dp = new boolean[len + 1];
+        dp[0] = true;
+        for(int j = 1; j <= len; j++)
+        {
+            for(int i = 0; i < j; i++)
+            {
+                if(dp[i] && wordDict.contains(s.substring(i,j)))
+                {
+                    dp[j] = true;
+                    break;
+                }
+            }
+        }
+        return dp[len];

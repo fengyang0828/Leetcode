@@ -1,0 +1,59 @@
+#1. use a set to avoid the loop endless.
+    set is used to store the squarenum for every iterator's n.
+    if there is the number in the set, we know that there is a dead loop and no longer to get 1, so we return false;
+class Solution {
+    public boolean isHappy(int n) {
+        HashSet<Integer> sumset = new HashSet<>();
+        int squaresum = 0;
+        int remain = 0;
+        while(!sumset.contains(n))
+        {
+            sumset.add(n);
+            squaresum = 0;
+            while(n > 0)
+            {
+                remain = n % 10;
+                squaresum += remain * remain;
+                n = n / 10;
+            }
+            if(squaresum == 1)
+                return true;
+            else n = squaresum;
+        }
+        return false;
+    }
+}
+
+Proof to "all numbers' calculation will goes into a single digit at some time".
+I post this as an answer to have a better format than comment.
+
+The happy sum of a N digit number, Happy(num), will not be larger than Happy(10^(N+1) - 1) = 81N.
+
+Therefore when N > 3, we always have 81N < 100N < (10^2) * N < 10^N, that is Happy(num) < num / 10, which will eventually reduce the happy sum of any number to smaller or equal to 999, because Happy(9999) < 999.
+
+Happy(999) = 243, therefore any number larger than 99 and smaller or equal to 999 should have a happy sum smaller or equal to 243, which in turn smaller than 299, which should have the largest happy sum among all numbers in [200, 300).
+Happy(299) = 166, therefore Happy(num) will get to a number smaller or equal to 166 at some step, which in turn smaller than 199.
+
+Happy(199) = 163 < 199.
+Happy(99) = 162.
+Combining 1 and 2 above, we know any numbers larger than 100 will be reduced to smaller than 163 at some step, and any numbers smaller than 100 have a happy sum that is smaller or equal to 162, therefore all numbers will be reduced to smaller or equal to 162 at some step.
+
+Now we only have 162 numbers to deal with, you can simply write a program to verify that their happy sum all get to a single digit at some step.
+
+#2. Solution2:
+for single digits, only 1 and 7 is the happy number, we know that every number will get down to single number one day.
+public boolean isHappy(int n) {
+        if(n<=0) return false;
+        while(true){
+            int sum=0;
+            while(n!=0){
+              sum+=(n%10)*(n%10);
+              n=n/10;
+            }
+            if(sum/10==0){
+               if(sum==1||sum==7) return true;
+               else return false;
+            }
+            n=sum;
+        }
+    }

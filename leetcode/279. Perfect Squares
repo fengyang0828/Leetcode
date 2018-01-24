@@ -1,0 +1,99 @@
+#1. Solution1 recursive DP
+but it will cause TLE since for every n we would find out all its pairs and calculate whether it is a perfectsquare.
+class Solution {
+    // dp problem
+    int[] dp;
+    public int numSquares(int n) {
+        dp = new int[n + 1];
+        if(n == 0) return 0;
+        dp[0] = 0;
+        return helper(n);
+    }
+
+    public int helper(int n)
+    {
+        if(dp[n] != 0)
+            return dp[n];
+        if(n == 0)
+            return dp[0];
+        if(n == 1)
+        {
+            dp[1] = 1;
+            return 1;
+        }
+        if(isPerfectSquare(n))
+        {
+            dp[n] = 1;
+            return 1;
+        }
+        int min = Integer.MAX_VALUE;
+        // int sqrt = (int) Math.sqrt(n);
+        // System.out.print(sqrt);
+        for(int i = 0; i <= n / 2; i++)
+        {
+            if(i > 0 && isPerfectSquare(i))
+            {
+                min = Math.min(min, 1 + helper(n - i));
+            }
+        }
+        dp[n] = min;
+        return dp[n];
+    }
+
+    public boolean isPerfectSquare(int n)
+    {
+        int temp = (int)Math.sqrt((double)n);
+        return temp * temp == n;
+    }
+}
+
+#2. a move up solution:
+the move up is that there is no need to caculate if i is a perfect square, because it really is.
+the time complexity is O(n * sqrt(n)).
+class Solution {
+    // dp problem
+    int[] dp;
+    public int numSquares(int n) {
+        dp = new int[n + 1];
+        if(n == 0) return 0;
+        dp[0] = 0;
+        dp[1] = 1;
+        return helper(n);
+    }
+
+    public int helper(int n)
+    {
+        if(dp[n] != 0)
+            return dp[n];
+        if(n == 0)
+            return dp[0];
+        int min = Integer.MAX_VALUE;
+        for(int i = 1; i * i <= n; i++)
+        {
+            min = Math.min(min, 1 + helper(n - i*i));
+        }
+        dp[n] = min;
+        return dp[n];
+    }
+}
+
+#3. Iterative way:
+The time complexity is same as below.
+int[] dp;
+    public int numSquares(int n) {
+        dp = new int[n + 1];
+        if(n == 0) return 0;
+        dp[0] = 0;
+        dp[1] = 1;
+        //return helper(n);
+        for(int i = 1; i <= n; i++)
+        {
+            int min = Integer.MAX_VALUE;
+            for(int j = 1; j*j <= i; j++)
+            {
+                min = Math.min(min, 1 + dp[i - j*j]);
+            }
+            dp[i] = min;
+        }
+        return dp[n];
+    }

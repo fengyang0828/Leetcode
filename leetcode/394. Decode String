@@ -1,0 +1,130 @@
+#1. use one stack, the world's most ugly code
+    very straigthward method: use sub to store every consentive character that is not number or []
+    everytime we find next character is number or [], we put this sub into stack
+    case 1: is number, is digit so we should add all the consentive digits into one stringbuilder, and add it into stack
+    case 2: is [, just add it into stack
+    case 3: is ], we need to pop all from the stack until get one '[', then, concat this string, use the string, which is
+            the repeattime, to repeat this concated string, then put it into stack
+    For example: 3[ab2[cd]]
+    1.now, s.charAt(i) at 3, is number, in case1, only one digit, so add it into the stack, stack looks like 3
+    2.next, [, so we should add it into stack, stack : 3[
+    3.continue to ab, next is 2, is digit, so we add to stack, 3[ab
+    4.add 2, stack 3[ab2
+    5.add [, stack 3[ab2[
+    6.continue to cd, add, stack 3[ab2[cd
+    7."]", so we have to pop until [, in this case is cd, and the count is 2, so we concat 2 times cd, get cdcd, then add it into stack
+            stack 3[abcdcd
+    8."]", so we pop until next [, concat all the string, abcdcd, repeat 3 times, abcdcdabcdcdabcdcd, that is all
+class Solution {
+    public String decodeString(String s) {
+        Stack<String> stack = new Stack<>();
+        String sub = "";
+        String result = "";
+        StringBuilder count = new StringBuilder();
+        for(int i = 0; i < s.length(); i++)
+        {
+            if(Character.isDigit(s.charAt(i)))
+            {
+                if(!sub.equals("")){
+                    stack.push(sub);
+                    sub = "";
+                }
+                count.append(s.charAt(i));
+                continue;
+            }
+            if(count.length() != 0)
+            {
+                stack.push(count.toString());
+                System.out.println("count"+ count.toString());
+                count = new StringBuilder();
+            }
+            if(s.charAt(i) == '[')
+            {
+                if(!sub.equals("")){
+                    stack.push(sub);
+                    sub = "";
+                }
+                stack.push(""+s.charAt(i));
+            }
+            else if(s.charAt(i) == ']')
+            {
+                if(!sub.equals("")){
+                    stack.push(sub);
+                    sub = "";
+                }
+                StringBuilder temp = new StringBuilder();
+                while(!stack.peek().equals("["))
+                {
+                    temp.insert(0, stack.pop());
+                }
+                System.out.println(temp.toString());
+                stack.pop();
+                int times = Integer.parseInt(stack.pop());
+                String t = temp.toString();
+                while(times > 1)
+                {
+                    temp.append(t);
+                    times--;
+                }
+                stack.push(temp.toString());
+            }
+            else
+            {
+                sub = sub + s.charAt(i);
+            }
+
+        }
+        // special case:
+        if(sub != null)
+            stack.push(sub);
+        StringBuilder sb = new StringBuilder();
+        while(!stack.isEmpty())
+        {
+            sb.insert(0,stack.pop());
+        }
+        result = sb.toString();
+        return result;
+    }
+
+}
+
+#2. recursive way
+Big idea : And the method is really straight-forward:
+every time when you meet a number, it must be followed by [...], we just need to recursively call our method to decode "...",
+then repeat the result "num" times.
+// recursive way
+        int num = 0;
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < s.length(); i++)
+        {
+            if(Character.isDigit(s.charAt(i)))
+            {
+                num = num * 10 + s.charAt(i) - '0';
+            }
+            else if(s.charAt(i) == '[')
+            {
+                // find the matching ]
+                int begin = i;
+                i++;
+                int count = 1;
+                while(count > 0)
+                {
+                    if(s.charAt(i) == '[')
+                        count ++;
+                    else if(s.charAt(i) == ']')
+                        count --;
+                    i++;
+                }
+                i--;
+                String res = decodeString(s.substring(begin + 1, i));
+                for(int k = 0; k < num; k++)
+                {
+                    sb.append(res);
+                }
+                num = 0;
+            }
+            else
+                sb.append(s.charAt(i));
+
+        }
+        return sb.toString();

@@ -1,0 +1,79 @@
+#1. we can sort the dictionary first by length and then by the lexicographical
+    and then we traverse the dictionary, use issubsequence to check if d[i] is a subsequence of s
+    if find, the anwser is found.
+point: sort and two pointer
+
+sort takes O(nlgn * L) L is the length in the dictionary
+and issubsequence takes s.length, m is the maximum length of the dictionary word.
+so total is O(nlgn * L + n * sl)
+class Solution {
+    public String findLongestWord(String s, List<String> d) {
+        Collections.sort(d, new Comparator<String>(){
+           public int compare(String a, String b)
+           {
+               if(a.length() != b.length())
+                   return b.length() - a.length();
+               return a.compareTo(b);
+           }
+        });
+
+        for(String word: d)
+        {
+            if(isSubsequence(word, s))
+                return word;
+        }
+        return "";
+    }
+
+    public boolean isSubsequence(String word, String s)
+    {
+        int i = 0;
+        int j = 0;
+        while(i < word.length() && j < s.length())
+        {
+            if(word.charAt(i) == s.charAt(j))
+            {
+                i++;
+                j++;
+            }
+            else
+                j++;
+        }
+        if(i == word.length()) return true;
+        return false;
+    }
+}
+
+#2. more optimal:
+not sort to save time!
+time complexity: O(n * (l + sl))
+if length is the same, we consider about the lexiorder!!!!
+
+        String result = "";
+        for(String word: d)
+        {
+            if(isSubsequence(word, s))
+            {
+                if(result.length() < word.length() || result.length() == word.length() && word.compareTo(result) < 0)
+                    result = word;
+            }
+        }
+        return result;
+
+        public boolean isSubsequence(String word, String s)
+            {
+                int i = 0;
+                int j = 0;
+                while(i < word.length() && j < s.length())
+                {
+                    if(word.charAt(i) == s.charAt(j))
+                    {
+                        i++;
+                        j++;
+                    }
+                    else
+                        j++;
+                }
+                if(i == word.length()) return true;
+                return false;
+            }

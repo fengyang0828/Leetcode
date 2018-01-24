@@ -1,0 +1,61 @@
+z#1. // Time complexity is O(nlgn) + O(n) = O(nlgn)
+
+public int longestConsecutive(int[] nums) {
+        if(nums == null || nums.length == 0)
+            return 0;
+        // Arrays.sort(nums);
+        // int max = 1;
+        // int temp = 1;
+        // for(int i = 0; i < nums.length - 1; i++)
+        // {
+        //     if(nums[i] == nums[i + 1] - 1)
+        //     {
+        //         temp ++;
+        //         max = Math.max(temp, max);
+        //         //System.out.println("temp" + temp);
+        //     }
+        //     else if(nums[i] == nums[i + 1])
+        //          continue;
+        //     else
+        //     {
+        //         temp = 1;
+        //     }
+        // }
+        // return max;
+
+
+#2. Use set to access O(n) approach, here we use remove to make sure that the time complexity is O(n)
+        Set<Integer> set = new HashSet<Integer>();
+        for(int i = 0; i < nums.length; i++)
+        {
+            set.add(nums[i]);
+        }
+        int max = 1;
+        for(int i = 0; i < nums.length; i++)
+        {
+            int num = nums[i];
+            int count = 1;
+
+            // look left
+            num --;
+            while(set.contains(num))
+            {
+                count++;
+                set.remove(num);
+                num --;
+            }
+
+            // look right
+            num = nums[i];
+            num ++;
+            while(set.contains(num))
+            {
+                count ++;
+                set.remove(num);
+                num ++;
+            }
+
+            max = Math.max(max, count);
+        }
+        return max;
+    }

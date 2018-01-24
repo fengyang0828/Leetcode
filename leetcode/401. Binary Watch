@@ -1,0 +1,107 @@
+1# Solution
+Use Combination's thought.
+The only difference is that we need to select specific number from the set, not select all combination from the set.
+Backtrack is a perfect solution. We need a count for backtrack to control the num of selection.
+The time complexity is C10 N.
+class Solution {
+
+    List<String> currlist = null;
+    List<String> result = null;
+
+    public List<String> readBinaryWatch(int num) {
+        String[] cache = {"0:01", "0:02", "0:04", "0:08", "0:16", "0:32","1:00", "2:00", "4:00", "8:00"};
+        currlist = (ArrayList)new ArrayList<String>();
+        result = (ArrayList)new ArrayList<String>();
+        combination(cache, 0, num);
+        return result;
+    }
+
+    public void combination(String[] cache, int start, int num){
+        if(num > 8) return;
+        if(num == 0 && start <= cache.length)
+        {
+            List<String> newlist = (ArrayList)new ArrayList<String>(currlist);
+            int hh = 0;
+            int mm = 0;
+            for(int i = 0; i < newlist.size(); i++)
+            {
+                char a = newlist.get(i).charAt(0);
+                char b = newlist.get(i).charAt(2);
+                char c = newlist.get(i).charAt(3);
+                if( a == '0')
+                {
+                    mm += Integer.parseInt(String.valueOf(b))*10;
+                    mm += Integer.parseInt(String.valueOf(c));
+                }
+                else
+                {
+                    hh += Integer.parseInt(String.valueOf(a));
+                }
+            }
+            String time = null;
+            if(hh < 1)
+            {
+                if(mm < 10)
+                {
+                    time = "0:0" + mm;
+                     result.add(time);
+                }
+
+                else if(mm < 60)
+                {
+                    time = "0:"+ mm;
+                    result.add(time);
+                }
+
+            }
+            else if (hh < 12)
+            {
+                if(mm < 10)
+                {
+                    time = hh+ ":0" + mm;
+                    result.add(time);
+                }
+
+                else if(mm < 60)
+                {
+                    time = hh + ":" + mm;
+                    result.add(time);
+                }
+            }
+
+        }
+
+        for(int i = start; i < cache.length; i++){
+            currlist.add(cache[i]);
+            combination(cache, i + 1, num - 1);
+            currlist.remove(currlist.size() - 1);
+        }
+    }
+}
+
+2# Solution..
+// use bit operation, use h<<6 | m to represent there are how many one in this number.
+    public List<String> readBinaryWatch(int num) {
+        List<String> result = (ArrayList)new ArrayList<String>();
+        for(int h = 0; h < 12; h++)
+        {
+            for(int m = 0; m < 60; m++)
+            {
+                int sumone = (h << 6) | m;
+                int temp = sumone;
+                int count = 0;
+                while(temp > 0)
+                {
+                    if((temp & 1) == 1)
+                        count++;
+                    temp = temp >> 1;
+                }
+                if(count == num)
+                {
+                    String time = h+":" + (m < 10 ? "0": "") + m;
+                    result.add(time);
+                }
+            }
+        }
+        return result;
+    }

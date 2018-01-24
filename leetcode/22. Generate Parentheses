@@ -1,0 +1,79 @@
+#1. Backtrack
+class Solution {
+
+    List<String> result = null;
+    public List<String> generateParenthesis(int n) {
+        result = (LinkedList) new LinkedList<String>();
+        helper("", n, n);
+        return result;
+    }
+
+    public void helper(String str, int left, int right)
+    {
+        if (left == 0 && right == 0)
+        {
+            result.add(str);
+            return;
+        }
+        if (left > 0)
+            helper(str + "(", left - 1, right);
+        if (right > left)
+            helper(str + ")", left, right - 1);
+        return;
+    }
+}
+
+
+#2 BackTrack easy understand version:
+    List<String> result = null;
+
+    public List<String> generateParenthesis(int n) {
+        result = (LinkedList) new LinkedList<String>();
+        helper("", 0, 0, n);
+        return result;
+    }
+
+    public void helper(String str, int open, int close, int n)
+    {
+        if (str.length() == n * 2)
+        {
+            result.add(str);
+            return;
+        }
+        if (open < n)
+            helper(str + "(", open + 1, close, n);
+        // here is to make sure that the parentheses is valid
+        if (close < open)
+            helper(str + ")", open, close + 1, n);
+        return;
+    }
+
+
+#3. DP solution
+ List<String>[] lists = null;
+    public List<String> generateParenthesis(int n) {
+        lists = new LinkedList[n + 1]; // store all P(k)'s for k=0,1,...,n
+        return helper(n);
+    }
+    public List<String> helper(int n) {
+        // if computed, reuse
+	    if(lists[n] != null)
+            return lists[n];
+	    if(n <= 0) {
+		    lists[0] = new LinkedList<String>(Arrays.asList(""));
+		    return lists[0];
+	    }
+        List<String> res = new LinkedList<String>();
+	    // the following simply implements the recursive formula derived above
+        for(int i = 0; i <= n - 1; i++) {
+    	    List<String> left = helper ( n - i - 1);
+    	    List<String> inside = helper(i);
+    	    for(String str1 : left) {
+    		    for(String str2 : inside) {
+    			    res.add("(" + str1 + ")" + str2);
+    		    }
+    	    }
+        }
+        lists[n] = res;
+        return res;
+    }

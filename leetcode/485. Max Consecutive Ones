@@ -1,0 +1,37 @@
+#1.basic idea
+public int findMaxConsecutiveOnes(int[] nums) {
+        int count = 0;
+        int max = 0;
+        for(int i = 0; i < nums.length; i++)
+        {
+            if(nums[i] == 1)
+            {
+                count ++;
+                max = Math.max(max, count);
+            }
+            else
+                count = 0;
+        }
+        return max;
+    }
+
+#2. improvement: we can update the max only when the nums[i] is 0 or i is at the end of the string
+
+public int findMaxConsecutiveOnes(int[] nums) {
+        int count = 0;
+        int max = 0;
+        for(int i = 0; i <= nums.length; i++)
+        {
+            if(i < nums.length && nums[i] == 1)
+            {
+                count ++;
+            }
+            else
+            {
+                max = Math.max(max, count);
+                count = 0;
+            }
+
+        }
+        return max;
+    }

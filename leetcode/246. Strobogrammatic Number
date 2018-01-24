@@ -1,0 +1,59 @@
+1. we know that the string must contains only "018", and "6" must pair to "9"
+2. then we transfer this question to palindrome question.
+class Solution {
+    public boolean isStrobogrammatic(String num) {
+        if (num == null || num.length() == 0)
+        {
+            return true;
+        }
+        int length = num.length();
+        int low = 0;
+        int high = length - 1;
+
+        while(low <= high)
+        {
+            char lownum = num.charAt(low);
+            char highnum = num.charAt(high);
+
+            if(lownum == highnum)
+            {
+                if(lownum != '1' && lownum != '8' && lownum != '0')
+                    return false;
+            }
+            else
+            {
+                if((lownum == '9' && highnum == '6' )||(lownum == '6' && highnum == '9'))
+                {
+
+                }
+                else
+                    return false;
+            }
+            high --;
+            low ++;
+        }
+        return true;
+    }
+}
+
+2# use map
+HashMap<Character, Character> map = new HashMap<Character, Character>();
+        map.put('0','0');
+        map.put('1','1');
+        map.put('8','8');
+        map.put('6','9');
+        map.put('9','6');
+
+        int low = 0;
+        int high = num.length() - 1;
+        while(low <= high)
+        {
+            if(!map.containsKey(num.charAt(low)) || !map.containsKey(num.charAt(high)))
+                return false;
+            else if(num.charAt(low) != map.get(num.charAt(high)))
+                return false;
+            low ++;
+            high --;
+        }
+        return true;
+    }

@@ -1,0 +1,81 @@
+#1. Solution1: simple solution
+class NumMatrix {
+    int m = 0;
+    int n = 0;
+    int[][] matrix;
+    public NumMatrix(int[][] matrix) {
+
+       if(   matrix           == null
+       || matrix.length    == 0
+       || matrix[0].length == 0   ){
+        return;
+     }
+        this.matrix = matrix;
+        m = matrix.length;
+        n = matrix[0].length;
+    }
+
+    public void update(int row, int col, int val) {
+        if(row < 0 || row >= m || col < 0 || col >= n)
+            return;
+        matrix[row][col] = val;
+    }
+
+    public int sumRegion(int row1, int col1, int row2, int col2) {
+        int sum = 0;
+        for(int i = row1; i <= row2; i++)
+        {
+            for(int j = col1; j <= col2; j++)
+            {
+                sum += matrix[i][j];
+            }
+        }
+        return sum;
+    }
+}
+
+#2. DP[] ways
+class NumMatrix {
+
+    int m = 0;
+    int n = 0;
+    int[][] matrix;
+    int[][] sum;
+    public NumMatrix(int[][] matrix) {
+        if(matrix == null || matrix.length == 0 || matrix[0].length == 0) return;
+        this.matrix = matrix;
+        m = matrix.length;
+        n = matrix[0].length;
+        sum = new int[m + 1][n + 1];
+        //sum[i][j + 1] stores the sum value from matrix[0][0] to matrix[i][j]
+        for(int i = 0; i < m; i++)
+        {
+            for(int j = 0; j < n; j++)
+                sum[i][j + 1] = sum[i][j] + matrix[i][j];
+        }
+    }
+
+    public void update(int row, int col, int val) {
+        for(int j = col + 1; j < sum[0].length; j++)
+        {
+            sum[row][j] = sum[row][j] - matrix[row][col] + val;
+        }
+        matrix[row][col] = val;
+    }
+
+    public int sumRegion(int row1, int col1, int row2, int col2) {
+        long rt = 0;
+        for (int i = row1; i <= row2; i++) {
+            rt += sum[i][col2 + 1] - sum[i][col1];
+        }
+        return (int) rt;
+    }
+}
+
+#3. Segement tree
+
+
+
+
+
+

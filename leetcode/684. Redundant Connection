@@ -1,0 +1,181 @@
+#1. Answer:
+
+DFS, after add the edge, we first check if we can find a route in the map during DFS, if there is a route, we know that if we add this
+edge into map, there will be a cycle, so return this edge.
+Map<Integer, List<Integer>> map;
+    int index = 0;
+    public int[] findRedundantConnection(int[][] edges) {
+        map = new HashMap<>();
+        int[] result = new int[2];
+        if(edges.length == 0) return result;
+        for(int[] edge: edges)
+        {
+            if(hascycle(edge[0], edge[1], -1))
+            {
+                return edge;
+            }
+            if(!map.containsKey(edge[0]))
+                map.put(edge[0], new ArrayList<>());
+            map.get(edge[0]).add(edge[1]);
+
+            if(!map.containsKey(edge[1]))
+                map.put(edge[1], new ArrayList<>());
+            map.get(edge[1]).add(edge[0]);
+
+
+        }
+        return result;
+    }
+#2. Union-find : when find two vertex of the edge has the same root we find a cycle
+    public int[] findRedundantConnection(int[][] edges) {
+
+        int[] id = new int[2001];
+        for(int i = 0; i < id.length; i++)
+        {
+            id[i] = i;
+        }
+
+        for(int[] edge: edges)
+        {
+            int p = find(id, edge[0]);
+            int q = find(id, edge[1]);
+            if(p == q) return edge;
+            id[p] = q;
+        }
+        return new int[2];
+    }
+    public int find(int[] id, int p)
+    {
+        while(id[p] != p)
+            p = id[p];
+        return id[p];
+    }
+
+#Detect cycle in an undirected graph:
+class Solution {
+    Map<Integer, List<Integer>> map;
+    int[] result = new int[2];
+    int index = 0;
+    public int[] findRedundantConnection(int[][] edges) {
+        map = new HashMap<>();
+        int size = edges.length;
+        for(int i = 0 ; i < size; i++)
+        {
+            if(!map.containsKey(edges[i][0]))
+                map.put(edges[i][0], new ArrayList<>());
+            map.get(edges[i][0]).add(edges[i][1]);
+
+            if(!map.containsKey(edges[i][1]))
+                map.put(edges[i][1], new ArrayList<>());
+            map.get(edges[i][1]).add(edges[i][0]);
+        }
+        if(map.size() == 0) return result;
+        Set<Integer> visited = new HashSet<>();
+        dfs(visited, edges[0][0], -1, edges);
+        return result;
+    }
+
+    public void dfs(Set<Integer> visited, Integer source, int parent, int[][] edges)
+    {
+        visited.add(source);
+        System.out.println("add:" + source);
+        for(Integer v : map.get(source))
+        if(!visited.contains(v))
+        {
+            dfs(visited, v, source, edges);
+        }
+        else if(v != parent)
+        {
+            int[] r = new int[2];
+            r[0] = Math.min(source, v);
+            r[1] = Math.max(source, v);
+            System.out.println(source +"->"+ v);
+            if(compare(r, edges)) result = r;
+        }
+    }
+
+
+This solution is only suitable for detect cycle, but not for detect which edge is cycle, so we should add the edge and
+check cycle for every add.
+If there is a circle, return current edge.
+
+
+# unpass some cases:
+
+    Map<Integer, List<Integer>> map;
+
+    int index = 0;
+    public int[] findRedundantConnection(int[][] edges) {
+        map = new HashMap<>();
+        int[] result = new int[2];
+        if(edges.length == 0) return result;
+        int size = edges.length;
+        for(int i = 0; i < size; i++)
+        {
+            Set<Integer> visited = new HashSet<>();
+            if(hascycle(visited, edges[0][0], -1))
+            {
+                result[0] = edges[i][0];
+                result[1] = edges[i][1];
+                return result;
+            }
+            if(!map.containsKey(edges[i][0]))
+                map.put(edges[i][0], new ArrayList<>());
+            map.get(edges[i][0]).add(edges[i][1]);
+
+            if(!map.containsKey(edges[i][1]))
+                map.put(edges[i][1], new ArrayList<>());
+            map.get(edges[i][1]).add(edges[i][0]);
+
+
+        }
+        return result;
+    }
+
+    public boolean hascycle(Set<Integer> visited, Integer source, int parent)
+    {
+        visited.add(source);
+        //System.out.println("add:" + source);
+        for(Integer v : map.get(source))
+        {
+            if(!visited.contains(v))
+            {
+                if(hascycle(visited, v, source))
+                    return true;
+            }
+            else if(v != parent)
+            {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+
+// two ways to DFS, use set or not !!!!
+    public boolean hascycle(int source, int target, int pre)
+    {
+        if(!map.containsKey(source)) return false;
+        if(map.get(source).contains(target)) return true;
+        for (int num : map.get(source)) {
+            if (num == pre) continue;
+            if (hascycle(num, target, source))
+                return true;
+        }
+        return false;
+    }
+
+        public boolean hascycle(Set<Integer> visited, int source, int target)
+        {
+            if(!map.containsKey(source)) return false;
+            if(map.get(source).contains(target)) return true;
+            visited.add(source);
+            for (int num : map.get(source)) {
+                if (!visited.contains(num)) {
+                    if (hascycle(visited, num, target))
+                        return true;
+                }
+            }
+            return false;
+        }

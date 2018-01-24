@@ -1,0 +1,91 @@
+#1.  // the run time complexity is O(m + n)....
+        // and use a extra space [m + n]....
+    //     public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+    //         int m = nums1.length;
+    //         int n = nums2.length;
+    //         int[] help = new int[m + n];
+    //         int k = 0;
+    //         int i = 0;
+    //         int j = 0;
+    //         while (i < m && j < n)
+    //         {
+    //             if(nums1[i] < nums2[j])
+    //             {
+    //                 help[k] = nums1[i];
+    //                 i++;
+    //             }
+    //             else
+    //             {
+    //                 help[k] = nums2[j];
+    //                 j++;
+    //             }
+    //             k++;
+    //         }
+    //         while(i < m)
+    //         {
+    //             help[k] = nums1[i];
+    //             k++;
+    //             i++;
+    //         }
+
+    //         while(j < n)
+    //         {
+    //             help[k] = nums2[j];
+    //             k++;
+    //             j++;
+    //         }
+
+    //         if(help.length % 2 == 1)
+    //             return help[help.length / 2];
+    //         else
+    //             return (double)(help[help.length / 2] + help[help.length / 2 - 1]) / 2;
+    //     }
+
+
+        // use binary search, run time complexity is O(log(m + n))
+        public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+            int m = nums1.length;
+            int n = nums2.length;
+
+            // This question can be converted into find the kth smallest number in two sorted arrays.
+            int k = (m + n + 1) / 2;
+            double median = findKth(nums1, 0, m - 1, nums2, 0, n - 1, k);
+            if((m+n) % 2 == 0)
+            {
+                // find k+1th number
+                double v = findKth(nums1, 0, m - 1, nums2, 0, n - 1, k + 1);
+                double t = (median + v) / 2.0;
+                return t;
+            }
+            else
+                return median;
+
+        }
+
+        public double findKth(int a[], int as, int ae, int b[], int bs, int be, int k){
+            if(as > ae) return b[bs + k - 1];
+            if(bs > be) return a[as + k - 1];
+
+            // x: amid - as , y: bmid - as
+            // if a[amid] <= b[bmid]
+            // (1) there are at least x + y + 1 elements before bmid.
+            // (2) there are at least m- x - 1 + n - y = m+n - (x+y+1) elements after amid;
+            // if(k > x + y + 1) we can focus on b and a[mid + 1...ae]
+            // if(k <= x + y + 1) we can focus on a and b[bs...mid - 1]
+            int amid = (as + ae) / 2;
+            int bmid = (bs + be) / 2;
+            if(a[amid] <= b[bmid])
+            {
+                if(k <= (amid - as) + (bmid - bs) + 1)
+                    return findKth(a, as, ae, b, bs, bmid - 1, k);
+                else
+                    return findKth(a, amid + 1, ae, b, bs, be, k - (amid - as + 1)); // ignore x + 1 elements
+            }
+            else
+            {
+                if(k <= (amid - as) + (bmid - bs) + 1)
+                    return findKth(a, as, amid - 1, b, bs, be, k);
+                else
+                    return findKth(a, as, ae, b, bmid + 1, be, k - (bmid - bs + 1)); // ignore y + 1 elements
+            }
+        }

@@ -1,0 +1,84 @@
+#1. copy a array and brute force to handle the circule array
+the time complexity is O(n * 2n)
+class Solution {
+    public int[] nextGreaterElements(int[] nums) {
+        int n = nums.length;
+        int[] result = new int[n];
+        int[] doublenums = new int[2 * n];
+        int max = Integer.MIN_VALUE;
+        for(int i = 0; i < 2 * n; i++)
+        {
+            doublenums[i] = nums[i % n];
+            max = Math.max(max, doublenums[i]);
+        }
+        for(int i = 0; i < n; i++)
+        {
+            if(nums[i] == max)
+            {
+                result[i] = -1;
+                continue;
+            }
+            for(int j = i + 1; j < 2*n; j++)
+            {
+                if(nums[i] < doublenums[j])
+                {
+                    result[i] = doublenums[j];
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+}
+
+
+#2. Stack
+First make every result to -1.
+like 496, just simple double the array
+but not really double the array, use % to traverse twice.
+the difference is that we store the index of the number in the stack.
+
+Stack<Integer> stack = new Stack<>();
+        int n = nums.length;
+        int[] result = new int[n];
+        Arrays.fill(result, -1);
+        for(int i = 0; i < 2 * n; i++)
+        {
+            int num = nums[i % n];
+            while(!stack.isEmpty() && nums[stack.peek()] < num)
+            {
+                result[stack.pop()] = num;
+            }
+            if(i < n)
+                stack.push(i);
+        }
+        return result;
+
+#3. The second way is to use a stack to facilitate the look up.
+First we put all indexes into the stack, smaller index on the top.
+For every current num[i], we traverse i to len, 0 to i - 1 to find the first one greater than it.
+Then we start from end of the array look for the first element (index) in the stack which is greater than the current one.
+That one is guaranteed to be the Next Greater Element.
+For example, tht stack first is 12345, and we traverse first, pop 1 and 2 out and find nums[3] is the next greater than nums[5]
+If you worry about next iterate: because we only have 5345 in the stack, there is no problem, since nums[5] > nums[1] & nums[2]
+for nums[4] the next can only be nums[5] or nums[3], there is no possible that it is nums[1].
+Then put the current element (index) into the stack.
+
+            Stack<Integer> stack = new Stack<>();
+            int n = nums.length;
+            int[] result = new int[n];
+            for(int i = n - 1; i >= 0; i--)
+            {
+                stack.push(i);
+                result[i] = -1;
+            }
+
+            for(int i = n - 1; i >= 0; i--)
+            {
+                while(!stack.isEmpty() && nums[stack.peek()] <= nums[i])
+                    stack.pop();
+                if(!stack.isEmpty())
+                    result[i] = nums[stack.peek()];
+                stack.push(i);
+            }
+            return result;

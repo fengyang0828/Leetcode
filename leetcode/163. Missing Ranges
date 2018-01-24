@@ -1,0 +1,45 @@
+#1.the target is find the missing range, so there is no need to consider about upper smaller than nums[k]
+
+    public List<String> findMissingRanges(int[] nums, int low, int up) {
+        List<String> list = (ArrayList) new ArrayList<>();
+        long lower = (long) low;
+        long upper = (long) up;
+
+        // handle the empty array but with lower and upper boundary case
+        if(nums == null || nums.length == 0)
+        {
+            list.add(helper(lower, upper));
+            return list;
+        }
+
+        // handle the lower boundary
+        long pre = nums[0];
+        if(pre > lower)
+        {
+            list.add(helper(lower, pre - 1));
+        }
+
+        // handle the middle
+        for(int i = 0; i < nums.length; i++)
+        {
+            if(nums[i] - pre > 1){
+                list.add(helper(pre + 1, nums[i] - 1));
+            }
+            pre = (long)nums[i];
+        }
+
+        // handle the upper boundary
+        if(upper > pre)
+            list.add(helper(pre + 1, upper));
+        return list;
+    }
+
+    public String helper(long m, long n)
+    {
+        if(m == n)
+            return String.valueOf(m);
+        else
+            return String.valueOf(m) + "->" + String.valueOf(n);
+    }
+}
+

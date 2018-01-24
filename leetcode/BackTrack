@@ -1,0 +1,46 @@
+# permutation
+public void backtrack(int[] array, int start, int end)
+    {
+        if(start == end)
+        {
+            List<Integer> clone = (ArrayList)new ArrayList<Integer>(currlist);
+            result.add(clone);
+            return;
+        }
+
+        for (int i = start; i < end; i++)
+        {
+            swap(array, i, start);
+            currlist.add(array[start]); // choose array[start], i is only used to swap, no other meanings
+            backtrack(array, start + 1, end); // permute the rest of of string
+            swap(array, i, start); // unchoose this one
+            currlist.remove(currlist.size() - 1);
+        }
+        return;
+}
+
+# Combination
+public void backtrack(int[] nums, int start)
+    {
+        result.add(new ArrayList(currlist));
+
+        for(int i = start; i < nums.length; i++)
+        {
+            if( i > start && nums[i] == nums[i - 1]) continue;
+            currlist.add(nums[i]);
+            backtrack(nums, i + 1); // here i
+            currlist.remove(currlist.size() - 1);
+        }
+        return;
+    }
+
+    Big idea : add nums[start] and backtrack the rest to find all the combination
+    do not add nums[start], then backtrack the other
+    if(!result.contains(currlist))
+        result.add(new ArrayList<>(currlist));
+        if(start >= nums.length)
+            return;
+        currlist.add(nums[start]);
+        backtrack(nums,start + 1);
+        currlist.remove(currlist.size() - 1);
+        backtrack(nums,start + 1);

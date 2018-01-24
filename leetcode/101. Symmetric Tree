@@ -1,0 +1,64 @@
+simply just add find the left's right tree and the right's left tree is the same!!
+and the left's left tree is same with the right's right tree
+
+running time complexity:
+O(n) since we have to traverse the whole tree.
+class Solution {
+    public boolean isSymmetric(TreeNode root) {
+        return systemtric(root,root);
+    }
+
+    public boolean systemtric(TreeNode p, TreeNode q)
+    {
+        if( p == null && q == null)
+            return true;
+
+        if( p == null || q == null)
+            return false;
+
+        if( p.val != q.val)
+            return false;
+
+        return systemtric(p.left,q.right) && systemtric(p.right, q.left);
+    }
+}
+
+Iterator way: 还是比较left.left and right.right && left.right and right.left
+class Solution {
+    public boolean isSymmetric(TreeNode root) {
+        Stack<TreeNode> s = new Stack<>();
+        if(root == null) return true;
+        TreeNode left, right;
+        if(root.left != null)
+        {
+            if(root.right == null) return false;
+            s.push(root.left);
+            s.push(root.right);
+        }
+        else if(root.right != null)
+            return false;
+        while(!s.isEmpty())
+        {
+            right = s.pop();
+            left = s.pop();
+            if(right.val != left.val)
+                return false;
+            if(left.left != null)
+            {
+                if(right.right == null) return false;
+                s.push(left.left);
+                s.push(right.right);
+            }
+            else if (right.right != null)
+                return false;
+            if(left.right != null)
+            {
+                if(right.left == null) return false;
+                s.push(left.right);
+                s.push(right.left);
+            }
+            else if (right.left != null)
+                return false;
+        }
+        return true;
+    }

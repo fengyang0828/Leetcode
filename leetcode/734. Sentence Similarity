@@ -1,0 +1,38 @@
+Question: if we need to consider the sequence of the words1 and words2
+
+Answer: no need to consider the sequence
+
+Solution: use the hashmap to store all the pairs, traverse words1 and words2,
+          to find when words1[i] != words2[i] if words[2] is contained in the set of words1, then safe, otherwise, return false
+
+Hint: there may a lot of pairs like "meal, dinner", "supper,dinner", "supper, meal",
+      so we need a map<String, Set<String>> to store the pairs.
+
+
+class Solution {
+    public boolean areSentencesSimilar(String[] words1, String[] words2, String[][] pairs) {
+
+        int m = words1.length;
+        int n = words2.length;
+        if( m != n) return false;
+
+        HashMap<String, Set<String>> pairinfo = new HashMap<>();
+        for(String[] p: pairs)
+        {
+            if(!pairinfo.containsKey(p[0]))
+                pairinfo.put(p[0], new HashSet<>());
+            if(!pairinfo.containsKey(p[1]))
+                pairinfo.put(p[1], new HashSet<>());
+            pairinfo.get(p[1]).add(p[0]);
+            pairinfo.get(p[0]).add(p[1]);
+        }
+
+        for(int i = 0; i < m; i++)
+        {
+            if(words1[i].equals(words2[i])) continue;
+            if(!pairinfo.containsKey(words1[i])) return false;
+            if(!pairinfo.get(words1[i]).contains(words2[i])) return false;
+        }
+        return true;
+    }
+}

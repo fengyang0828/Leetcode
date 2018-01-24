@@ -1,0 +1,26 @@
+// two ways to DFS, use set or not !!!!
+    public boolean hascycle(int source, int target, int pre)
+    {
+        if(!map.containsKey(source)) return false;
+        if(map.get(source).contains(target)) return true;
+        for (int num : map.get(source)) {
+            if (num == pre) continue;
+            if (hascycle(num, target, source))
+                return true;
+        }
+        return false;
+    }
+
+        public boolean hascycle(Set<Integer> visited, int source, int target)
+        {
+            if(!map.containsKey(source)) return false;
+            if(map.get(source).contains(target)) return true;
+            visited.add(source);
+            for (int num : map.get(source)) {
+                if (!visited.contains(num)) {
+                    if (hascycle(visited, num, target))
+                        return true;
+                }
+            }
+            return false;
+        }

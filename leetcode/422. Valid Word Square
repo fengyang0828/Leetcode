@@ -1,0 +1,36 @@
+The main idea is that to check every words.get(j).char(i) is equal to words.get(i).char(j)
+if they are not equal to each other, then return false.
+To make this, we need to consider the edge of j and i, we need to keep words.get(j) in safe, thus, we need to check if j > words.size
+we need to keep words.get(j).char(i) safe, thus, we need to check if words.get(j).length >= i
+
+1. Solution:  we can transfer this list to a two-dimension array and scan, which cause O(n^2) time & space complexity and fill in the
+              array with the words in the list and if there is no words in the string, we fill in the array with 0.
+              This will make us not to consider about the edge of the loop.
+2# Solution: Not to make up a new array but to consider about the edge.
+
+class Solution {
+    public boolean validWordSquare(List<String> words) {
+
+
+
+        // 2. Not transfer to an array and scan.
+        int size = words.size();
+        for(int i = 0; i < size; i++)
+        {
+            String sub = words.get(i);
+            for(int j = 0; j < sub.length(); j++)
+            {
+                if(j >= size || words.get(j).length() <= i)
+                    return false;
+                else
+                {
+                    if(sub.charAt(j) != words.get(j).charAt(i))
+                        return false;
+                }
+            }
+        }
+        return true;
+    }
+}
+
+3# we can use try catch to solve this problem, if there is a j or i exceed the edge, then we need to return false.

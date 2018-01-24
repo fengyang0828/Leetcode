@@ -1,0 +1,38 @@
+class Solution {
+    public boolean isValid(String s) {
+
+        Map<Character,Character> brackets = new HashMap<Character,Character>();
+        brackets.put(')', '(');
+        brackets.put('}', '{');
+        brackets.put(']', '[');
+
+        int length = s.length();
+        char s_to_char[] = s.toCharArray();
+
+        if (length % 2 == 1)
+            return false;
+
+        Stack <Character> match = new Stack<Character>();
+        for ( int i = 0; i < length; i++)
+        {
+            char bracket = s_to_char[i];
+            if(bracket == '('||bracket == '{'||bracket == '[')
+            {
+                match.push(bracket);
+
+            }
+            else if(brackets.containsKey(bracket))
+            {
+                if(match.size() == 0 || match.pop()!= brackets.get(bracket))
+                    return false;
+            }
+            else
+                return false;
+        }
+
+        if(match.size()==0)
+            return true;
+        else
+            return false;
+    }
+}

@@ -1,0 +1,52 @@
+#1. Brute force
+The time complexity is O(n)
+focus on two special cases:
+1. i == 0
+2. i == nums.length - 2
+class Solution {
+    public int findPeakElement(int[] nums) {
+        if(nums.length == 0 || nums.length == 1) return 0;
+        for(int i = 0; i < nums.length - 1; i++)
+        {
+            if(i == 0)
+            {
+                if(nums[i] > nums[i + 1])
+                    return 0;
+            }
+            else if(nums[i - 1] < nums[i] && nums[i] > nums[i + 1])
+                return i;
+            if(i == nums.length - 2)
+            {
+                if(nums[i] < nums[i + 1])
+                    return i + 1;
+            }
+        }
+        return -1;
+    }
+}
+
+//Follow up: make the running time O(lgn), we can use binary search and find every local maximum
+If num[i] < num[i+1], then num[i+1...n-1] must contains a peak
+If num[i] > num[i+1], then num[0...i-1] must contains a peak
+
+more consice:
+If num[i-1] < num[i] > num[i+1], then num[i] is peak
+If num[i-1] < num[i] < num[i+1], then num[i+1...n-1] must contains a peak
+If num[i-1] > num[i] > num[i+1], then num[0...i-1] must contains a peak
+If num[i-1] > num[i] < num[i+1], then both sides have peak
+        int low = 0;
+        int high = nums.length - 1;
+        while(low < high)
+        {
+            int mid1 = low + (high - low) / 2;
+            int mid2 = mid1 + 1;
+            if(nums[mid1] < nums[mid2])
+            {
+                low = mid2;
+            }
+            else
+            {
+                high = mid1;
+            }
+        }
+        return low;

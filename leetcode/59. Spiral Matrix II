@@ -1,0 +1,145 @@
+Given an integer n, generate a square matrix filled with elements from 1 to n2 in spiral order.
+For example,
+Given n = 3,
+You should return the following matrix:
+[
+ [ 1, 2, 3 ],
+ [ 8, 9, 4 ],
+ [ 7, 6, 5 ]
+]
+
+same as the 54
+class Solution {
+    int[][] result;
+    int cur = 1;
+    public int[][] generateMatrix(int n) {
+        result = new int[n][n];
+        int up = 0;
+        int down = n - 1;
+        int left = 0;
+        int right = n - 1;
+        helper(up, down, left, right);
+        return result;
+    }
+
+    public void helper(int up, int down, int left, int right)
+    {
+        if(up > down || left > right) return;
+        if(up == down && left == right)
+        {
+            result[up][left] = cur;
+        }
+        for(int i = left; i <= right; i++)
+        {
+            result[up][i] = cur;
+            cur++;
+        }
+
+        for(int i = up + 1; i <= down; i++)
+        {
+            result[i][right] = cur;
+            cur ++;
+        }
+
+        for(int i = right - 1; i >= left; i--)
+        {
+            result[down][i] = cur;
+            cur ++;
+        }
+
+        for(int i = down - 1; i > up; i--)
+        {
+            result[i][left] = cur;
+            cur ++;
+        }
+
+        helper(up + 1, down - 1, left + 1, right - 1);
+    }
+}
+
+#2. Iterative way:
+class Solution {
+    int[][] result;
+    int cur = 1;
+    public int[][] generateMatrix(int n) {
+
+        // helper(up, down, left, right);
+        // iterative way
+        result = new int[n][n];
+        int up = 0;
+        int down = n - 1;
+        int left = 0;
+        int right = n - 1;
+        int cur = 1;
+        while(up <= down && left <= right)
+        {
+            for(int i = left; i <= right; i++)
+            {
+                result[up][i] = cur;
+                cur++;
+            }
+
+            for(int i = up + 1; i <= down; i++)
+            {
+                result[i][right] = cur;
+                cur ++;
+            }
+
+
+            for(int i = right - 1; i >= left; i--)
+            {
+                result[down][i] = cur;
+                cur ++;
+            }
+
+            for(int i = down - 1; i > up; i--)
+            {
+                result[i][left] = cur;
+                cur ++;
+            }
+            up ++;
+            right--;
+            down--;
+            left++;
+        }
+       return result;
+
+#3. another iterative way
+
+        result = new int[n][n];
+        int up = 0;
+        int down = n - 1;
+        int left = 0;
+        int right = n - 1;
+        int cur = 1;
+        while(up <= down && left <= right)
+        {
+            for(int i = left; i <= right; i++)
+            {
+                result[up][i] = cur;
+                cur++;
+            }
+            up ++;
+            for(int i = up; i <= down; i++)
+            {
+                result[i][right] = cur;
+                cur ++;
+            }
+
+            right--;
+
+            for(int i = right; i >= left; i--)
+            {
+                result[down][i] = cur;
+                cur ++;
+            }
+
+            down--;
+            for(int i = down; i >= up; i--)
+            {
+                result[i][left] = cur;
+                cur ++;
+            }
+            left++;
+        }
+        return result;

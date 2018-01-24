@@ -1,0 +1,106 @@
+#1. Brute force: Calculate all the permutation of S1, and findout if it is substring of S2.
+class Solution {
+    Set<String> set;
+    public boolean checkInclusion(String s1, String s2) {
+        set = new HashSet<>();
+        char[] array = s1.toCharArray();
+        permutation(array, 0);
+        Iterator<String> iterator = set.iterator();
+        while(iterator.hasNext()) {
+            String setElement = iterator.next();
+            if(s2.contains(setElement))
+                return true;
+        }
+        return false;
+
+    }
+
+    public void permutation(char[] array, int start)
+    {
+        if(start == array.length)
+        {
+            if(!set.contains(String.valueOf(array)))
+                set.add(String.valueOf(array));
+            return;
+        }
+
+        for(int i = start; i < array.length; i++)
+        {
+            swap(array, i, start);
+            permutation(array, start + 1);
+            swap(array, i, start);
+        }
+    }
+
+    public void swap(char[] array, int m, int n)
+    {
+        char temp = array[m];
+        array[m] = array[n];
+        array[n] = temp;
+    }
+}
+
+#2. A slide window question!!!!!
+    calculate if every character in S1 and store in the map
+    and traverse s2, use a slide window with length = s1.length,
+    check every slide window:
+    if this slide window has same frequency for every character in the map, then return true
+    else window slide one character to right.
+
+            Map<Character, Integer> cnt = new HashMap<>();
+            for (char c : s1.toCharArray()) {
+                cnt.put(c, cnt.getOrDefault(c, 0) + 1);
+            }
+
+            int matchedCnt = 0;
+            for (int i = 0; i < s2.length(); i++) {
+                char c = s2.charAt(i);
+                if (cnt.containsKey(c)) {
+                    cnt.put(c, cnt.get(c) - 1);
+                    if (cnt.get(c) == 0)
+                        matchedCnt++;
+                }
+                if (i >= s1.length()) {
+                // c is the left one that would be removed from the slide window
+                    c = s2.charAt(i - s1.length());
+                    if (cnt.containsKey(c)) {
+                        if (cnt.get(c) == 0) matchedCnt--;
+                        cnt.put(c, cnt.get(c) + 1);
+                    }
+                }
+
+                if (matchedCnt == cnt.keySet().size()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+#3. use count to calculate the frequency of every character appear in s1
+
+        int[] count = new int[26];
+        for(int i = 0; i < s1.length(); i++)
+        {
+            count[s1.charAt(i) - 'a']++;
+            if(allzero(count)) return true;
+        }
+        for(int i = 0; i < s2.length(); i++)
+        {
+            count[s2.charAt(i) - 'a']--;
+            if(i >= s1.length())
+            {
+                count[s2.charAt(i - s1.length()) - 'a']++;
+            }
+            if(allzero(count)) return true;
+        }
+        return false;
+
+    public boolean allzero(int[] count)
+    {
+        for(int i = 0; i < count.length; i++)
+        {
+            if(count[i] != 0) return false;
+        }
+        return true;
+    }

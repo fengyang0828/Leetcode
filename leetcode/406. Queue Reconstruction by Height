@@ -1,0 +1,34 @@
+Should first understand the real meaning of the problem
+given a unsorted array, we need to construct it to be a quene, which satisfy that (h,k) means there
+are k people has greater or equal to itself.
+
+Firstly, we sort the array by height in the reverse order and if height is the same, then we sort by k, smaller k will in the front.
+Then, we use the way similar to insert sorting to reorder the people.
+For a given person to insert, all the people already sorted are higher, (because the array is sorted in reverse order)
+so we just insert him in the "right" place to make the people before him as his "count" indicates.
+Since he is shorter than all the people in the sorted list,
+the "count" of the "existing" people does not be broken by the insertion.
+
+    public int[][] reconstructQueue(int[][] people) {
+        Arrays.sort(people, new Comparator<int[]>(){
+           public int compare(int[] a, int[] b){
+               if(b[0] == a[0]) return a[1] - b[1];
+               else return b[0] - a[0];
+           }
+        });
+        if(people == null || people.length == 0)
+            return new int[0][0];
+        int[][] result = new int[people.length][2];
+        ArrayList<int[]> list = new ArrayList<>();
+        for(int i = 0; i < people.length; i++)
+        {
+            list.add(people[i][1], new int[]{people[i][0], people[i][1]});
+        }
+        int index = 0;
+        for(int[] a: list)
+        {
+            result[index] = a;
+            index++;
+        }
+        return result;
+    }

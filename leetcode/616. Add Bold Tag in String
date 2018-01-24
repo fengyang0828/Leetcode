@@ -1,0 +1,194 @@
+Given a string s and a list of strings dict, you need to add a closed pair of bold tag <b> and </b> to wrap the substrings in s that exist in dict. If two such substrings overlap, you need to wrap them together by only one pair of closed bold tag. Also, if two substrings wrapped by bold tags are consecutive, you need to combine them.
+Example 1:
+Input:
+s = "abcxyz123"
+dict = ["abc","123"]
+Output:
+"<b>abc</b>xyz<b>123</b>"
+
+Example 2:
+Input:
+s = "aaabbcc"
+dict = ["aaa","aab","bc"]
+Output:
+"<b>aaabbc</b>c"
+
+
+#1. Like merge interval
+Consider you have string
+s = "aaabbcc"
+dict = ["aaa","aab","bc"]
+you find the index of each string in dict, conver to an interval, you will get
+
+   [[0, 3], [1, 4], [4, 6]]
+     aaa     aab      bc
+   then sort this interval by interval.start then combine these intervals
+   Ater merged, we get several intervals and now we got [0,6], so we know "aaabbc" needs to be surrounded by tag.
+
+public class Solution {
+    public class interval{
+        int start;
+        int end;
+        interval(int start,int end){
+            this.start=start;
+            this.end=end;
+        }
+    }
+    public String addBoldTag(String s, String[] dict) {
+        List<interval> list = new ArrayList<>();
+        for(String str:dict){
+            int index=s.indexOf(str,0);
+            while(index!=-1){
+                 list.add(new interval(index,index+str.length()));
+                 index=s.indexOf(str,index+1);
+            }
+        }
+        Collections.sort(list,new Comparator<interval>(){
+            public int compare(interval a,interval b){
+                return a.start-b.start;
+            }
+        });
+        List<interval> res = mergeInterval(list);
+
+        int pre=0;
+        StringBuilder sb = new StringBuilder();
+        for(interval ele:res){
+             sb.append(s.substring(pre,ele.start));
+             sb.append("<b>"+s.substring(ele.start,ele.end)+"</b>");
+             pre=ele.end;
+        }
+
+        if(pre<s.length()){
+            sb.append(s.substring(pre));
+        }
+
+        return sb.toString();
+    }
+
+    public List<interval> mergeInterval(List<interval> list){
+        List<interval> res = new ArrayList<>();
+        if(list==null || list.size()==0){
+             return res;
+        }
+
+        res.add(list.get(0));
+        for(int i=1;i<list.size();i++){
+             interval temp=list.get(i);
+             if(temp.start>res.get(res.size()-1).end){
+                 res.add(temp);
+             }else{
+                 int max=Math.max(res.get(res.size()-1).end,temp.end);
+                 res.get(res.size()-1).end=max;
+             }
+        }
+        return res;
+    }
+}
+
+
+#2. use a boolean array to store if this character should be 'bold'
+explanation:
+for (int i = 0, end = 0; i < s.length(); i++) { // For every character in `s`,
+        for (String word : dict) { // For every `word` in `dict`, we test:
+            // If substring s[i, i + word.length()] == word, meaning characters between i,
+            // i + word.length() should be `bold`.
+            if (s.startsWith(word, i)) {
+                // Use variable `end` to store known longest end of current continuous `bold` characters
+                end = Math.max(end, i + word.length());
+            }
+        }
+        // If `end` > `i`, meaning character at position `i` is within the current continuous `bold`
+        // characters, we mark it as `bold`.
+        bold[i] = end > i;
+    }
+
+
+    class Solution {
+        public String addBoldTag(String s, String[] dict) {
+            boolean[] test = new boolean[s.length()];
+
+            // 精炼版！！
+            for(int i = 0, end = 0; i < s.length(); i++)
+            {
+                for(String words : dict)
+                {
+                    // if dict contains several words that in s, we find out the longest one.
+                    if(s.startsWith(words, i))
+                        end = Math.max(end, i + words.length());
+                }
+                if(end > i)
+                    test[i] = true;
+                else
+                    test[i] = false;
+            }
+            // 好理解的版本
+            for(int i = 0; i < S.length(); i++)
+                    {
+                        for(String word: words)
+                        {
+                            if(S.startsWith(word, i))
+                            {
+                                for(int j = i; j < i + word.length(); j++)
+                                    visited[j] = true;
+                            }
+                        }
+                    }
+
+            StringBuilder sb = new StringBuilder();
+            for(int i = 0; i < s.length();)
+            {
+                if(test[i] == true)
+                {
+                    int j = i;
+                    while(j < s.length() && test[j] == true) j++;
+                    sb.append("<b>").append(s.substring(i, j)).append("</b>");
+                    if( j > i) i = j;
+                    else i ++;
+                    continue;
+                }
+                sb.append(s.charAt(i));
+                i++;
+            }
+            return sb.toString();
+
+        }
+    }
+
+
+
+＃! wrong solution:
+can not use index of because of the reason: 不能用indexof，可能S中会有重复出现目标s，indexof只能返回第一个出现的index
+class Solution {
+    public String boldWords(String[] words, String S) {
+        boolean[] visited = new boolean[S.length()];
+        for(String s: words)
+        {
+            // 不能用indexof，可能S中会有重复出现目标s，indexof只能返回第一个出现的index
+            int index = S.indexOf(s);
+            if(index != -1)
+            {
+                for(int i = 0; i < s.length(); i++)
+                    visited[index + i] = true;
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < visited.length;)
+        {
+            if(visited[i] == true)
+            {
+                sb.append("<b>");
+                int j = i;
+                while(j < S.length() && visited[j] == true) j++;
+                sb.append(S.substring(i, j)).append("</b>");
+                if(j > i) i = j;
+                else i++;
+            }
+            else
+            {
+                sb.append(S.charAt(i));
+                i++;
+            }
+        }
+        return sb.toString();
+    }
+}

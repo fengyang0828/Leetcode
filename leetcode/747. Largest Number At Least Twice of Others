@@ -1,0 +1,31 @@
+#1. very simple idea with max and submax
+three cases:
+case 1: if target > max: submax = max, max = target
+case 2: if submax < target < max, submax = target
+case 3: do nothing
+
+class Solution {
+    public int dominantIndex(int[] nums) {
+        int max = Integer.MIN_VALUE;
+        int submax = Integer.MIN_VALUE;
+        int index = 0;
+        for(int i = 0; i < nums.length; i++)
+        {
+            if(nums[i] > max)
+            {
+                submax = max;
+                max = nums[i];
+                index = i;
+            }
+            else if (nums[i] < max && nums[i] > submax)
+            {
+                submax = nums[i];
+            }
+        }
+
+        if(max >= submax * 2)
+            return index;
+        return -1;
+
+    }
+}

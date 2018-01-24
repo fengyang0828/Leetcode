@@ -1,0 +1,44 @@
+class Solution {
+    //http://blog.csdn.net/qq575787460/article/details/41215475
+    // if one array is strictly descending, then, we know that it has no next permutation
+    // for each order, we need to look from the end, and compare each two adjacent element, and find the 1st left element less than the right element.
+    public void nextPermutation(int[] nums) {
+        int j = nums.length - 1;
+        int i = j - 1;
+        while(i >= 0 && nums[i] >= nums[j])
+        {
+            i--;
+            j--;
+        }
+        // which means that it is not a strictly descending array, so we find i is the first element less than its next
+        if(i >= 0)
+        {
+            // we know that the elements after i is in descending order, so if we want to find the one which is the smallest number but larger than nums[i], we can look from the end, and find the first one which larger than nums[i]
+            int k = nums.length - 1;
+            while(k > i && nums[k] <= nums[i])
+            {
+                k--;
+            }
+            swap(nums, i , k);
+        }
+        // we know that we should reverse the string after i to be ascending order
+        reverse(nums, i + 1, nums.length - 1);
+
+    }
+
+    public void reverse(int[] nums, int i, int j)
+    {
+        while( i <= j)
+        {
+            swap(nums, i , j);
+            i++;
+            j--;
+        }
+    }
+
+    public void swap(int[] nums, int x, int y){
+        int temp = nums[x];
+        nums[x] = nums[y];
+        nums[y] = temp;
+    }
+}

@@ -1,0 +1,62 @@
+Big idea: for the list.x.end < newinterval.start, we simply add the x into the result, since they do not need to merge.
+
+
+for list.x, when newinterval.start < x.end, which means x is the interval we start to merge.
+
+second loop: the loop end is when newinterval.end < x.start, end loop.
+Merge x and new interval: after merge, the start = Math.min(new.start, x.start)
+                                       the end = Math.max(new.end, x.end)
+Now, we set newinterval to the new interval,
+
+For example:
+[[1,2],[3,5],[6,7],[8,10],[12,16]]
+[4,9]
+
+newinterval will be[3, 9], now continue to loop, we get [6, 7], 6 < 9, so we still merge[3,9] and [6,7].
+
+when loop end, we simply add all rest intervals in the list to the result.
+
+#1. big O is O(n), but since we use get(index) a lot of times, it will cause O(n) in the worst case.
+
+class Solution {
+    public List<Interval> insert(List<Interval> intervals, Interval newInterval) {
+        List<Interval> result = (ArrayList) new ArrayList<>();
+        // find the preinterval that we want to add
+        int index = 0;
+        while(index < intervals.size() && intervals.get(index).end < newInterval.start)
+            result.add(intervals.get(index++));
+        // now intervals.get(index).end < newinterval.start, which means we want to merge
+        while(index < intervals.size() && intervals.get(index).start <= newInterval.end)
+        {
+            int start = Math.min(newInterval.start, intervals.get(index).start);
+            int end = Math.max(newInterval.end, intervals.get(index).end);
+            newInterval = new Interval(start, end);
+            index ++;
+        }
+        result.add(newInterval);
+        while(index < intervals.size()) result.add(intervals.get(index++));
+        return result;
+
+    }
+}
+
+#2, use iterator to avoid the question of get
+
+public List<Interval> insert(List<Interval> intervals, Interval newInterval) {
+    List<Interval> result = new ArrayList<Interval>();
+    for (Interval i : intervals) {
+        if (newInterval == null || i.end < newInterval.start)
+            result.add(i);
+        else if (i.start > newInterval.end) {
+            result.add(newInterval);
+            result.add(i);
+            newInterval = null;
+        } else {
+            newInterval.start = Math.min(newInterval.start, i.start);
+            newInterval.end = Math.max(newInterval.end, i.end);
+        }
+    }
+    if (newInterval != null)
+        result.add(newInterval);
+    return result;
+}

@@ -1,0 +1,61 @@
+#1. Solution 1: 效率最低
+判断二叉树是否合理：
+public boolean isBST(TreeNode root)
+    {
+        max = Integer.MIN_VALUE;
+        min = Integer.MAX_VALUE;
+        if(root == null) return true;
+        if(root.left != null)
+        {
+            int left_max = findleftmax(root.left);
+            if(left_max >= root.val)
+                return false;
+        }
+        if(root.right != null)
+        {
+            int right_min = findrightmin(root.right);
+            if(right_min <= root.val)
+                return false;
+        }
+        return isBST(root.right) && isBST(root.left);
+
+    }
+
+    public int findleftmax(TreeNode root)
+    {
+        if(root == null) return 0;
+        max = Math.max(max, root.val);
+        findleftmax(root.left);
+        findleftmax(root.right);
+        return max;
+    }
+
+    public int findrightmin(TreeNode root)
+    {
+        if(root == null) return 0;
+        min = Math.min(min, root.val);
+        findrightmin(root.left);
+        findrightmin(root.right);
+        return min;
+    }
+
+＃2. O(n) solution:
+ public boolean isValidBST(TreeNode root) {
+        return helper(root, Long.MIN_VALUE, Long.MAX_VALUE);
+    }
+
+    public boolean helper(TreeNode root, Long min, Long max)
+    {
+        if(root == null) return true;
+        if(root.val <= min || root.val >= max) return false;
+        boolean left = helper(root.left, min, (long)root.val);
+        boolean right = helper(root.right, (long)root.val, max);
+        return left && right;
+    }
+
+#3. O(n) time + O(n) space
+inorder and find out if the new array is a increasing sequence, if it is ,then return true;
+
+#4. O(n) time without space:
+inorder
+use a pre pointer to point the pre node, and if pre > current, return false;

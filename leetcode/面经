@@ -1,0 +1,775 @@
+Round 1:
+Giving start string and end string, determine if start string can finally reach to the same as end string with below rules.
+For example:
+"R L _ _ L R L"
+"_": the space is empty
+"L": this can only swap with the empty letter _ on its left side
+"R": this can only swap with the empty letter _ on its right side
+So, "R L _ _ L R L" can change to "R L _ L _ R L" , and can continue change to (if you want) "R L L _ _ R L"
+The question is given these rules and the start string and end string, could we change the start string to end string (unlimited # moves as long as it is valid).
+For example:
+"R _ _ L R _ R _L"
+can be changed to
+"_ R L _ _ R R L _"
+
+One more criteria: consider
+"_ _ _ R"
+"_ _ R _"
+will they match? no, the last R int the start str cannot shift to match the end str, implies, the last R index in start str should be <= the last R index in the end str. Similarly for the first R...
+
+
+Big idea: for each L in the target, the count of R on its left side should be the same as the count in the destination
+
+
+Match: R_R_L_RR_L
+     : RR__L_R_RL
+
+public boolean play(String target, String destination)
+{
+    int count[] = new int[target.length];
+    if(target.length() != destination.length())
+        return false;
+
+    int countR1 = 0;
+    int countL1 = 0;
+    int index = 0;
+    for(int i = 0; i < target.length(); i++)
+    {
+        if(target.charAt(i) == 'L')
+        {
+            countL1++;
+            count[index] = countR;
+            index++;
+        }
+        else
+        {
+            countR1++;
+        }
+    }
+
+    index = 0;
+    int countR2 = 0;
+    int countL2 = 0;
+
+    for(int i = 0; i < destination.length(); i++)
+    {
+        if(destination.charAt(i) == 'L')
+        {
+            countL2++;
+            if(count[index] != countR)
+                return false;
+            index++;
+        }
+        else
+        {
+            countR2++;
+        }
+    }
+
+    if(countR1 != countR2 || countL1 != countL2)
+        return false;
+
+    int index1 = target.lastIndexof('R');
+    int index2 = destination.lastIndexof('R');
+    if(index1 < index2) return false;
+
+    index1 = target.Indexof('L');
+    index2 = destination.Indexof('L');
+
+    if(index1 > index2) return false;
+
+    return true;
+}
+
+
+给一个vote类
+Vote
+{
+    String name;
+    int timestamp;
+}
+
+输入是一个vote的collection和一个给定target timestamp，求到target的时间时，得票最多的人。
+比如输入：
+"a"  10001
+"b"  10003
+"b"  10007
+"c"  10020
+"a"  10030
+"a"  10050
+如果target是10010，返回b; 如果target是10036，返回a,b; 如果target是10051，返回a。collection未排序。
+
+
+public int findMax{
+    HashMap<String, Integer> map = new HashMap<>();
+    int max = 1;
+    Iterator it = Collections.Iterator(input);
+    while(it.hasNext())
+    {
+        if(it.timestamp > target)
+            continue;
+        if(!map.containsKey(it.name);
+            map.put(it.name, 1);
+        else
+            {
+                map.put(it.name, map.get(it.name) + 1);
+                max = Math.max(max, map.get(it.name) + 1);
+            }
+    }
+    return max;
+}
+
+＃2.
+There is a ball on the nth stairs, and it wants to get to the ground(level 0). There are some sticky stairs, and once the ball lands on the sticky stair, it is stuck and can never move.
+During odd turns, you can jump down 1, 2, or 4 stairs.  During even turns, you can jump down 1, 3, 4 stairs.
+Return the number of ways you can get to ground.
+
+Set<Integer> set = new HashSet<>();
+public countWays(int[] stricky, int n)
+{
+    for(int i: stricky)
+        set.add(stricky);
+
+    int[][] dp = new int[n][2];
+    // dp[m][n], m represent the level the frog at, and the n means it is now even or odd turn
+    // dp[0][1] represent the frog at the ground when his last turn is odd
+    // dp[0][0] represent the frog at the ground when his last turn is even
+    dp[1][0] = 0;
+    //dp[n][1] = 3; first jump is the base case because it can only be the odd turn and there are three ways, n - 1, n - 2, n - 4
+    so we can reverse the question like we jump from the groud and to get n:
+    dp[1][1] = 3;
+    helper(n,1);
+    return dp[0][0] + dp[0][1];
+}
+
+public int helper(int n, int turn)
+{
+    if(set.contains(n))
+        {
+            dp[n][0] = 0;
+            dp[n][1] = 0;
+            return 0;
+        }
+
+    if(n == 1)
+        return dp[1][1];
+
+    if(n < 1)
+        return 0;
+    dp[n][0] = helper(n - 1, 1) + helper(n - 3, 1) + helper(n - 4, 1);
+    dp[n][1] = helper(n - 1, 0) + helper(n - 2, 0) + helper(n - 4, 0);
+
+}
+
+If you had a list of countries and their population, create  a random generator that picks a country but takes into consideration the population.
+So a country with a higher population has a higher chance of being chosen.
+
+//Map<String, List<Long>> country = new HashMap<>();
+public String  random(List<Country> list)
+{
+    Long sum = 0;
+    int[] range = new int[list.size()];
+    int index = 0;
+    for(Country c: list)
+    {
+        sum += c.population;
+        range[index] = sum;
+        index ++;
+    }
+
+    Random rand = new Random();
+    int generator = rand.nextInt(sum);
+
+    // binary search to optimize my solution
+
+    int low = 0;
+    int high = 10;
+    while(low <= high)
+    {
+        int mid = low + (high - low) / 2;
+        if(range[mid] < generator)
+        {
+            low = mid + 1;
+        }
+
+        else if(range[mid] > generator)
+        {
+            high = mid - 1;
+        }
+    }
+
+    return list.get(low);
+
+}
+
+问了一道题
+给一个数组，n的长度（n >=1），含有所有1 - n的数字，要求得到一个最小的index。
+满足条件: 如果把数组小于等于index的部分排序好，并且把数组大于index的部分排序好，那么整个数组就排序好了。
+
+Idea 1: keep maintain the max value when traverse the array and check if the max equals to index + 1
+     for example: 31254.
+     ___index___, we know that left of index must less than index and right of index must bigger than index.
+     so nums[index] must be the max of the number before them, and there are index number before index, so index should be index + 1
+     nums[index] == index + 1
+
+public static int find(int[] array)
+    {
+        int max = 0;
+        for(int i = 0; i < array.length; i++)
+        {
+            max = Math.max(max, array[i]);
+            if(i < array.length - 1) {
+                if (max == i + 1)
+                    return i;
+            }
+        }
+        return array.length - 1;
+
+    }
+
+ Idea2: keep the sum, same as above.
+ int find(vector<int> nums) {
+         if (nums.empty()) return 0;
+         int nsum = 0, isum = 0;
+         for (int i = 0; i < nums.size(); i++) {
+                 int iPlusOne = i + 1;
+                 isum += iPlusOne;.
+                 nsum += nums[i];.
+                 if (isum == nsum) return i;
+         }
+         return nums.size() - 1;
+ }
+
+
+ 给两个char array，其中有一些char为backspace就是删除前面的字符，要求输出一个boolean判断两个char array是否相同，时间要求O(n) , 空间要求O(1)
+ 例如：
+ [a,b,'\b',d,c] 和[a,d,c] true
+ [a,b,'\b','\b','\b',d,c] 和 [d,c] true
+ [a,b,d,'\b'] 和 [a,d] false
+
+ 这道题edge case 太多了！！！！
+
+ 怎么想？
+ Why start from the end??
+ I think we start from the end of the char array would be better because we can simply skip the '\b' and count the '\b'
+ to find out how many number we should skip if we meet a '\b'.
+ But if we start from the beginning, when we meet the '\b', we should come back to the position we are supposed to be,
+ that's not a O(n) solution.
+
+ we have two pointer to traverse these two array, we know that the two array is the same only i have traverse the whole a, and j traverse the whole j
+ only j traverse the whole b, or i traverse the whole a can not be a true situation.
+ j < 0 && i < 0 : return true
+ and what is very important is that, after j is traverse the whole b, i haven't traverse the whole i, which means j < 0 && i >= 0
+ there is still some possible that i can traverse the whole a.
+ for example:{'a','\b', 'c'}, {'c'}, in this case we know that even if j has reached the start, i hasn't, but this two array is the same.
+
+ j <= 0 && i >= 0
+ two cases: so we know the condition to keep the loop is while(i >= 0 && j >= -1)
+ 1. if i != '\b', return false immediately
+ 2. if i == '\b', continue to traverse a.
+
+ j >= 0 && i <= 0 return false
+
+ j>=0 && i >= 0 continue;
+
+ next question is that, when we meet '\b', we should count the skip numbers, so that at next iterator, we can find the accurate position of i
+
+
+
+
+ public class backspace {
+
+ //    [a,b,'\b',d,c] 和[a,d,c] true
+ //    [a,b,'\b','\b','\b',d,c] 和 [d,c] true
+ //    [a,b,'\b','\b',d,c] 和 [d,c] true
+ //    [a,b,d,'\b'] 和 [a,d] false
+     public static boolean check(char[] a, char[] b)
+     {
+         // a is the array which has '/b'
+         // two pointer
+         int i = a.length - 1, j = b.length - 1;
+         int skip = 0;
+         while(i - skip >= 0 && j >= -1)
+         {
+             if(a[i] == '\b')
+             {
+                 skip += 1;
+                 i--;
+             }
+             else
+             {
+                 if (a[i - skip] == '\b') {
+                     i = i - skip;
+                 }
+                 else if(j >= 0 && a[i - skip] == b[j])
+                 {
+                     i = i - skip - 1;
+                     j--;
+                 }
+                 else
+                     return false;
+                 skip = 0;
+ //                if(j >= 0) {
+ //                    if (a[i - skip] == b[j]) {
+ //                        i = i - skip - 1;
+ //                        j--;
+ //                    } else if (a[i - skip] == '\b') {
+ //                        i = i - skip;
+ //                    } else
+ //                        return false;
+ //                    skip = 0;
+ //                }
+ //                else
+ //                {
+ //                    if(a[i - skip] == '\b')
+ //                        i = i -skip;
+ //                    else
+ //                        return false;
+ //                    skip = 0;
+ //                }
+             }
+         }
+         if(i - skip >= 0 || j >= 0)
+             return false;
+         return true;
+     }
+
+Follow up: if the string is very large and can not fit the memory?
+           split the memory to two space and half to
+
+
+（1）给你一个公司里员工的上下层关系（数据结构是什么面试官要我自己决定， 我用的是n叉树）
+output 公司里ceo（root）与最下面的员工（leaf）的最大层数差（找最长的一条路径返回长度）
+由于数据结构是树，直接dfs搞定
+（2）follow up，现在每一个员工都被assigned了一个幸福值，写一个方法返回所有员工的幸福值
+幸福值 ＝ 员工本身的幸福值 ＋ 所有该员工下属的幸福值的平均值（这里下属既可以是直属也可以是非直属， 在n叉树里表示的是什么应该都知道吧hhh）
+同样用dfs，但是每次递归返回的时候要包含一些信息，比如，有多少个下属员工，下属员工的幸福值总和是多少之类的
+
+public class ManyTrees{
+	int value;
+	List<ManyTrees> childrenlist;
+
+	public ManyTrees(int v, List<ManyTrees> c)
+	{
+		this.value = v;
+		this.childrenlist = c;
+	}
+}
+
+int max = 0;
+public int findmaxlength(ManyTrees root)
+{
+	if(root == null) return 0;
+	helper(root);
+	return max;
+}
+
+public int helper(ManyTrees root)
+{
+	if(root == null) return 0;
+	if(root.childrenlist == null) return 1;
+	int temp = 0;
+	// since it is a tree, so there is no possible that there has a cycle, we do not need a visited array to check if there is cycle
+	for(ManyTrees child: root.childrenlist)
+	{
+		temp = Math.max(temp, helper(child)) + 1;
+	}
+	max = Math.max(temp, max);
+	return temp;
+}
+
+Follow up: add a happiness to every manytree nodes
+
+public class ManyTrees{
+	int value;
+	List<ManyTrees> childrenlist;
+	double happiness;
+
+	public ManyTrees(int v, List<ManyTrees> c, double h)
+	{
+		this.value = v;
+		this.childrenlist = c;
+		this.happiness = h;
+	}
+}
+
+public class Result{
+	// have how may employees
+	int number;
+	// the sum of the happiness they have
+	double happiness;
+
+	public Result(int n, double h)
+	{
+		this.number = n;
+		this.happiness = h;
+	}
+}
+
+int max = 0;
+public void caculatehappiness(ManyTrees root)
+{
+	if(root == null) return 0;
+	helper(root);
+}
+
+public Result helper(ManyTrees root)
+{
+	Result r = new Result();
+	if(root == null) return r;
+	if(root.childrenlist == null)
+	{
+		r.number = 1;
+		r.happiness = root.value;
+		return r;
+	}
+
+	int totalnumber = 0;
+	int sum = 0;
+	double avg = 0.0;
+	for(ManyTrees child: root.childrenlist)
+	{
+		Result temp = helper(child);
+		totalnumber += temp.number;
+		sum += temp.happiness;
+	}
+	avg = (double)sum / totalnumber;
+	root.happiness = avg + root.value;
+	r.number = totalnumber + 1;
+	r.happiness = sum;
+	return r;
+}
+
+
+多叉树的生成和构造方法：
+public class ManyTreeNode
+{
+    /** 树节点*/
+    private TreeNode data;
+    /** 子树集合*/
+    private List<ManyTreeNode> childList;
+
+    /**
+     * 构造函数
+     *
+     * @param data 树节点
+     */
+    public ManyTreeNode(TreeNode data)
+    {
+        this.data = data;
+        this.childList = new ArrayList<ManyTreeNode>();
+    }
+
+    /**
+     * 构造函数
+     *
+     * @param data 树节点
+     * @param childList 子树集合
+     */
+    public ManyTreeNode(TreeNode data, List<ManyTreeNode> childList)
+    {
+        this.data = data;
+        this.childList = childList;
+    }
+
+    public TreeNode getData() {
+        return data;
+    }
+
+    public void setData(TreeNode data) {
+        this.data = data;
+    }
+
+    public List<ManyTreeNode> getChildList() {
+        return childList;
+    }
+
+    public void setChildList(List<ManyTreeNode> childList) {
+        this.childList = childList;
+    }
+
+}
+
+
+两天前的背靠背，都不是常规题
+
+第一轮是设计题，给你函数
+int timerID = startTimer(int millseconds, Runnable run);
+cancelTimer(int timerID);
+还有一个class sprite 有draw(int x, int y) function，功能是在一个画板上让你在x y这个坐标画出这个sprite
+要求让你实现一个单线程animation画板，画板大小1024x1024，要求你在（512，512）处画一个地球，然后画一个月球，月球每五秒绕着地球转一圈，轨道半径是125。
+要实现的function有
+start(){}
+stop(){}
+draw(){}
+面试官人真的非常好，我一个转专业的，对线程什么的一无所知，能感觉到他在努力帮助你写出来。
+我全程都在疯狂clarify问题，因此写的时间不是很多，代码也有很多毛病。。。回来仔细一想，还有一些bug。。。move on 了，说实话面试官这么帮助我，
+我感觉面试体验还是挺好的，即使跪了也觉得学到了东西。
+
+第二轮
+这一轮很凉，先出了一道很简单的is similar tree，easy 难度吧，感觉就是个warm up.
+t
+a a
+b c c b
+d e f g g f e d
+这两颗是similar tree,因为把孩子flip一下就变得一模一样，geek for geek上也有原题。
+然后问了时间复杂度，我懵逼了。。。。应该是n方
+然后难的地方来了。。。。。。。。。让我设计一个md5 hash function类似的function,来判断两棵树是否是类似的，
+不一定要做到完全accurate....然后我说把每一层level的和加起来返回一个int, 比较int是否一样，显然不是小哥满意的答案。
+inorder the tree, and for example above, we have a list dbeacfgtgfcaebd, find the root t, and reverse the right.
+we know for each value, there is a hash value, wo we can find out if this value is the same.
+
+第一题：我本科ee，很惭愧没有学过线程，面试时候我一听到thread就打开了geek for geek搜了一个线程的例子，
+然后面试时候照猫画虎写，面试完自己在家恶补了几天线程，发现自己照猫画虎写的居然对。。具体就是把自己实现的这个class 变成runnable的，然后在run 里 call start。
+当时面试官问我想怎么做，我说我想用一个while loop, 然后用一个boolean值作为开关控制start跑不跑，他说不用这样子，直接在run里call start就可以了。
+然后在draw function里要实现实时更新月球的地址，我之前学过一点computer graphics, 要使一个object绕另一点转动的计算方法是：1平移至原点，2乘cos sin来绕原点旋转，3平移回去 。
+面试官没听太懂，但是他人很好，我写完代码后他手算了一下说这个看起来可行，然后他跟我介绍了他期望的方法是横竖平移，也是通过角度来计算x y各平移多少。具体计算角度就是用过了多少时间来计算，
+我说 java获取当前时间还要声明一个calendar对象，我们时间不多了我直接assume一个getCurrentTime()行吗？面试官说好的没问题。这一轮感觉一直被很好地引导着做题，特别感谢这位面试官。
+
+
+第二轮，原题很简单不说了，复杂度是n方有一个同学在楼里解释了，跟我想的一样：
+因为我们要去看两个孩子，而且对两个孩子来说有两种similar的可能性 （排列一样或者flip了），
+因此每一层的复杂度是4*（num of nodes）, 一共有logN层，所以复杂度是4^logN = N^2.
+md5 hash 我的做法肯定不好...但当时没有想出特别好的方法，面试官问我会如何实现，我就把怎么level order traversal说了一下，
+这个至今也没想出一个完美的md5 hash方法，面试结束我问面试官，如果是你的话你会怎么hash?
+他说最重要的是保存起来你的树的结构....并没有具体说他会怎么做，当时心里还凉凉的，现在也很感谢小哥放我一马。接下来就是跪求team match！！！
+
+补充内容 (2018-1-20 17:20):
+当然结构保证的同时值肯定也得是一样的，1-2 这样的树跟 3-4这样的树肯定不是 similar的..所以楼上有一个说不用考虑值的应该不是很对
+
+
+发个今天下午Google的实习电面。 感觉 Google 的面试 很看人品，身边有的人面的题很难， 有的面的很简单（比如我），然并卵。
+第一轮 ： 一个 印度姐姐， 感觉人还不错。电话刚打来就说有的事要一会再打来。 接着再打来之后， 出了题， 然后又说有事，要挂断一会， 正好给我一段时间好好思考。
+
+题目很简单， 两个List， 里面的element 可以是任意type。返回 两个list的差。
+
+比如 A=【1,2,2,2】
+B= 【1,2,3,3,3】
+A-B= 【2,2】
+B-A =【3,3,3】
+要求就是 求出 A-B 和 B-A。
+O(m) + O(n) + O(result)
+public static List<Integer> sub(List<Integer> A, List<Integer> B)
+    {
+        //A-B
+        List <Integer> result = new ArrayList<Integer>();
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for(int i : A)
+        {
+            if(!map.containsKey(i))
+                map.put(i, 1);
+            else
+                map.put(i, map.get(i) + 1);
+        }
+
+        for(int j : B)
+        {
+            if(map.containsKey(j))
+            {
+                // there is no such element in A
+                if(map.get(j) == 0)
+                    map.remove(j);
+                else
+                    map.put(j, map.get(j) - 1);
+            }
+        }
+
+        for(int key : map.keySet())
+        {
+            for(int i = 0; i < map.get(key); i++)
+            {
+                result.add(key);
+            }
+        }
+        return result;
+    }
+
+//brute force: O(mn)
+    public static List<Integer> subbruteforce(List<Integer> A, List<Integer> B)
+    {
+        // if there is duplicate, I think we should have a visited array for B to find out if it is visited
+        List <Integer> result = new ArrayList<Integer>();
+        boolean[] visited = new boolean[B.size()];
+        for(int i: A)
+        {
+            int flag  = 0;
+            int index = 0;
+            for(int j = 0; j < B.size();j++)
+            {
+                if(i == B.get(j) && !visited[j]) {
+                    flag = 1;
+                    // handle the duplicate
+                    visited[j] = true;
+                    break;
+                }
+            }
+            if(flag == 0)
+                result.add(i);
+        }
+        return result;
+    }
+    // O(nlogm) 二分法
+    public static List<Integer> subbruteforce(List<Integer> A, List<Integer> B)
+    {
+        // if there is duplicate, I think we should have a visited array for B to find out if it is visited
+        List <Integer> result = new ArrayList<Integer>();
+        boolean[] visited = new boolean[B.size()];
+        for(int i: A)
+        {
+            int flag  = 0;
+            int low = 0;
+            int high = B.size() - 1;
+            while(low <= high)
+            {
+                int mid = low + (high - low) / 2;
+                if(B.get(mid) == i && !visited[mid])
+                {
+                    flag = 1;
+                    visited[mid] = true;
+                    break;
+                }
+                else if(B.get(mid) < i)
+                {
+                    low = mid + 1;
+                }
+                else
+                    high = mid - 1;
+            }
+            if(flag == 0)
+                result.add(i);
+        }
+        return result;
+    }
+
+一开始提了一个 nested for loop 暴力解 O(mn）。 她说可以。 接着我提了 一个 O（n），用Hashmap 储存的办法，一开始我还傻傻的说要用两个hashmap，然后她提醒我一个就够了。 然后我明白了就开始写代码了。
+接着写完之后 她提出要我用 O（nlogn）的时间做但是不能用hashmap， 然后我就说吧暴力解里面的一个loop改成binary search就行了，她说可以。因为时间快到了就没让我写代码让我问问题。 感觉她就准备了一道题。
+
+
+第二面面的不好。题目也很简单， 可惜我题刷的太少，不熟。面试官的英语讲的模糊不清的，很难交流。
+
+给出一个单词的String， 判断是不是decremental word， 比如 Print， 每次删掉一个character， 然后有个help function check 是否是valid word(这个不需要我写），
+然后一直删到剩一个character，可以删任意character。
+要求每次都得是 valid word。 最后决定最原先的input的单词是否是 decremental word。
+比如 Print->Pint ->Pit ->IT ->I 这里面 每个词都是 一个valid word，所以print就是一个 decremental word。
+
+我用recursion 去做， 经过他很多次提醒，代码也磕磕碰碰的写出来了不过感觉漏洞百出，然后最后时间到了 他问我 time complexity是多少 我好像没说对，想请教一下大佬 这里time complexity应该是多少呢？ 感觉应该挂了，不奢求有加面了(其实也是很累了不想面了）。接下来准备好好查缺补漏刷题，真正提升自己的能力才是关键。
+
+DFS. O(n!) n's factorial!
+public static boolean check(String s)
+    {
+        int len = s.length();
+        if(len == 1) return true;
+        boolean result = checkValid(s);
+        if(!result) return false;
+
+        List<String> substring = new ArrayList<>();
+        for(int i = 0; i < len; i++)
+        {
+            substring.add(s.substring(0,i) + s.substring(i + 1,len));
+        }
+
+        boolean t = false;
+        for(String sub: substring)
+        {
+            if(check(sub))
+                t = true;
+        }
+
+        return t;
+    }
+
+第一轮是白人小姐姐很和善，只做了一道题，两个follow up
+首先判断一个数字是不是lucky的(数字里不能带4，因为在中文是死的意思），
+然后第一个followup是给出一个整数之前的lucky数字的数量，第二个是如何显示出一个每个unlucky的数字
+
+public static boolean isluckynumer(int num)
+    {
+        int flag = 0;
+        while(num > 0)
+        {
+            int digit = num % 10;
+            if(digit == 4)
+            {
+                flag = 1;
+                break;
+            }
+            num = num / 10;
+        }
+        if(flag == 1) return false;
+        else
+            return true;
+    }
+
+    public static int luckynumer(int num)
+    {
+        int sum = 0;
+        while(num > 0) {
+            num--;
+            if (isluckynumer(num))
+                sum++;
+            else
+                System.out.println(num);
+        }
+        return sum;
+    }
+
+第二轮是印度姐姐直接开始做题，一共做了三道
+第一道是输入两个数组，输出他们的交集
+第二道是输入两个字符串，如果他们之间的不同字符数量为1，返回true(a=xyz, b=xyu或者a=xyz, b=xyzu都会返回true）
+    // 对sequence没有要求的话，则可以用hashmap来做
+    // 若对sequence有要求，那么就是 3cases:
+    // Math.abs(A.length - B.length) >= 2 false
+    // A.length == B.length, only one of them is different
+    // longlength - shortlength is 1, then
+    public static boolean stringdiff(String A, String B)
+    {
+        int lenA = A.length();
+        int lenB = B.length();
+        String Longstring = lenA > lenB ? A : B;
+        String shortstring = lenA < lenB ? A : B;
+
+        if(Math.abs(lenA - lenB) >= 2) return false;
+        if(Longstring.length() - shortstring.length() == 1)
+        {
+            int i = 0;
+            int j = 0;
+            int flag = 0;
+            while(i < Longstring.length() && j < shortstring.length())
+            {
+                if(Longstring.charAt(i) != shortstring.charAt(j))
+                {
+                        if(flag == 1) return false;
+                        flag = 1;
+                        i++;
+                        continue;
+                }
+                i++;
+                j++;
+            }
+        }
+        else
+        {
+            int m = 0;
+            int n = 0;
+            int flag = 0;
+            System.out.println("same");
+            while(m < A.length() && n < B.length())
+            {
+                if(A.charAt(m) != B.charAt(n))
+                {
+                    if(flag == 1) return false;
+                    flag = 1;
+                }
+                n++; m++;
+            }
+        }
+
+        return true;
+
+    }
+第三道是输入不同颜色的油漆及其花费，以及一定数量的房子，要求在每种颜色油漆都会用到的前提下，以最低花费粉刷所有房子，相邻房子颜色不能一样
+
+如果房子数量小于油漆数量显然无法办到，
+如果房子数量大于油漆数量，那么第一轮给每个房子一种油漆，运用greedy的思想，找出每种颜色花费最少的家庭，
+第二轮轮流使用两个最便宜的油漆就得到了输出。
+

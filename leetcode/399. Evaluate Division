@@ -1,0 +1,249 @@
+Equations are given in the format A / B = k, where A and B are variables represented as strings,
+and k is a real number (floating point number). Given some queries, return the answers.
+If the answer does not exist, return -1.0.
+
+Example:
+Given a / b = 2.0, b / c = 3.0.
+queries are: a / c = ?, b / a = ?, a / e = ?, a / a = ?, x / x = ? .
+return [6.0, 0.5, -1.0, 1.0, -1.0 ].
+
+The input is: vector<pair<string, string>> equations, vector<double>& values,
+vector<pair<string, string>> queries , where equations.size() == values.size(),
+and the values are positive. This represents the equations.
+Return vector<double>.
+
+According to the example above:
+
+equations = [ ["a", "b"], ["b", "c"] ],
+values = [2.0, 3.0],
+queries = [ ["a", "c"], ["b", "a"], ["a", "e"], ["a", "a"], ["x", "x"] ].
+
+if(x is not included in the equations, then we will get x / y = - 1.0)
+
+// use a map<String, Map<String, Double>> this data structure
+or we can use a
+map<String, ArrayList<String>>
+map<String, ArrayList<Double>> that is the same.
+
+and we have to use DFS, the tricky is that it is not a very simple DFS, we must multiple the result after we find one result.
+
+class Solution {
+
+    Map<String, Map<String, Double>> map;
+    public double[] calcEquation(String[][] equations, double[] values, String[][] queries) {
+        map = new HashMap<>();
+        int value_index = 0;
+        for(String[] pair: equations)
+        {
+            if(!map.containsKey(pair[0]))
+                map.put(pair[0], new HashMap<>());
+            map.get(pair[0]).put(pair[1], values[value_index]);
+
+            // add inverse number
+            if(!map.containsKey(pair[1]))
+                map.put(pair[1], new HashMap<>());
+            map.get(pair[1]).put(pair[0], (double) 1 / values[value_index]);
+
+            value_index ++;
+        }
+        double[] result = new double[queries.length];
+        int index = 0;
+        for(String[] pair : queries)
+        {
+            if(!map.containsKey(pair[0]))
+                result[index] = -1.0;
+            else if(pair[0].equals(pair[1]))
+                result[index] = 1.0;
+            else if(map.get(pair[0]).containsKey(pair[1]))
+                result[index] = map.get(pair[0]).get(pair[1]);
+            else
+            {
+                //DFS
+                Set<String> visited = new HashSet<>();
+                double dfs_result = DFS(pair[0], pair[1], visited);
+                if(Double.isNaN(dfs_result))
+                    result[index] = -1.0;
+                else
+                    result[index] = dfs_result;
+
+            }
+            index ++;
+        }
+        return result;
+    }
+
+    public double DFS(String source, String target, Set<String> visited)
+    {
+        if(map.get(source).containsKey(target))
+            return map.get(source).get(target);
+        for(String s: map.get(source).keySet())
+        {
+            if(!visited.contains(s))
+            {
+                visited.add(s);
+                double result = DFS(s, target, visited);
+                if(!Double.isNaN(result))
+                    return map.get(source).get(s) * result;
+            }
+        }
+        return Double.NaN;
+    }
+}
+
+
+Use EDGE as a new object to solve this problem
+        private class Edge{
+            String v;
+            Double w;
+            public Edge(String v, Double w)
+            {
+                this.v = v;
+                this.w = w;
+            }
+        }
+
+    Map<String, List<Edge>> map;
+    public double[] calcEquation(String[][] equations, double[] values, String[][] queries) {
+        map = new HashMap<>();
+        int index = 0;
+        for(String[] pair: equations)
+        {
+            if(!map.containsKey(pair[0]))
+            {
+                map.put(pair[0], new ArrayList<>());
+            }
+            map.get(pair[0]).add(new Edge(pair[1], values[index]));
+
+            if(!map.containsKey(pair[1]))
+            {
+                map.put(pair[1], new ArrayList<>());
+            }
+            map.get(pair[1]).add(new Edge(pair[0], (double) 1 / values[index]));
+            index ++;
+        }
+
+        double result[] = new double[queries.length];
+        int resindex = 0;
+        for(String[] pair: queries)
+        {
+            if(!map.containsKey(pair[0]))
+                result[resindex] = -1.0;
+            else if (pair[0].equals(pair[1]))
+                result[resindex] = 1.0;
+            else
+            {
+                //DFS
+                Set<String> visited = new HashSet<>();
+                double res = DFS(pair[0], pair[1], visited);
+                if(Double.isNaN(res))
+                    result[resindex] = -1.0;
+                else
+                    result[resindex] = res;
+            }
+            resindex++;
+        }
+        return result;
+    }
+
+    public double DFS(String source, String target, Set<String> visited)
+    {
+        //if(source.equals(target)) return 1.0;
+        for(Edge e: map.get(source))
+        {
+            if(e.v.equals(target)) return e.w;
+            if(!visited.contains(e.v))
+            {
+                visited.add(e.v);
+                double res = DFS(e.v, target, visited);
+                if(!Double.isNaN(res))
+                    return res * e.w;
+            }
+        }
+        return Double.NaN;
+    }
+
+
+// BFS
+is a little bit complicate than DFS because we need a queue to store the middle result
+
+class Solution {
+
+        private class Edge{
+            String v;
+            Double w;
+            public Edge(String v, Double w)
+            {
+                this.v = v;
+                this.w = w;
+            }
+        }
+
+    Map<String, List<Edge>> map;
+    public double[] calcEquation(String[][] equations, double[] values, String[][] queries) {
+        map = new HashMap<>();
+        int index = 0;
+        for(String[] pair: equations)
+        {
+            if(!map.containsKey(pair[0]))
+            {
+                map.put(pair[0], new ArrayList<>());
+            }
+            map.get(pair[0]).add(new Edge(pair[1], values[index]));
+
+            if(!map.containsKey(pair[1]))
+            {
+                map.put(pair[1], new ArrayList<>());
+            }
+            map.get(pair[1]).add(new Edge(pair[0], (double) 1 / values[index]));
+            index ++;
+        }
+
+        double result[] = new double[queries.length];
+        int resindex = 0;
+        for(String[] pair: queries)
+        {
+            if(!map.containsKey(pair[0]))
+                result[resindex] = -1.0;
+            else if (pair[0].equals(pair[1]))
+                result[resindex] = 1.0;
+            else
+            {
+                //BFS
+                Queue<Edge> q = new LinkedList<>();
+                Set<String> visited = new HashSet<>();
+                q.offer(new Edge(pair[0], 1.0));
+                visited.add(pair[0]);
+                while(!q.isEmpty())
+                {
+                    Edge edge = q.poll();
+                    visited.add(edge.v);
+                    for(Edge e: map.get(edge.v))
+                    {
+                        if(e.v.equals(pair[1]))
+                        {
+                            result[resindex] = edge.w * e.w;
+                            break;
+                        }
+                        if(!visited.contains(e.v))
+                        {
+                            q.offer(new Edge(e.v, edge.w * e.w));
+                        }
+                    }
+                    if(result[resindex] != 0)
+                        break;
+                }
+                if(result[resindex] == 0)
+                    result[resindex] = -1.0;
+            }
+            resindex++;
+        }
+        return result;
+
+    }
+
+
+
+
+//UNION-FIND
+http://www.cnblogs.com/SeaSky0606/p/4752941.html
+可以优化到连通仅需要O(1),find O(lgn)

@@ -1,0 +1,37 @@
+1. Solution:
+The result of n is always related to the result of n-2;
+for the sublist, we need to add 0+s+0;
+for the final list, we do not add 0+s+0 to avoid like "010"'s string.
+class Solution {
+    public List<String> findStrobogrammatic(int n) {
+        return helper(n, n);
+    }
+
+    public List<String> helper(int n, int num){
+        List<String> result = (ArrayList) new ArrayList<String>();
+        if (n == 0)
+        {
+            result.add("");
+            return result;
+        }
+        if (n == 1) {
+            result.add("1");
+            result.add("8");
+            result.add("0");
+            return result;
+        }
+        result = helper(n - 2, num);
+        List<String> res = (ArrayList)new ArrayList<String>();
+        for (int i = 0; i < result.size(); i++)
+        {
+            String s = result.get(i);
+            if (n != num)
+                res.add("0" + s + "0");
+            res.add("1" + s + "1");
+            res.add("8" + s + "8");
+            res.add("6" + s + "9");
+            res.add("9" + s + "6");
+        }
+        return res;
+    }
+}

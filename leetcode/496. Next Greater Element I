@@ -1,0 +1,66 @@
+#1. Brute force: O(mnk) in the worst case, the running time is O(mn^2)
+/*
+    思路是遍历nums1，对每一个数，找到它在nums2的位置，然后从这个位置开始向后遍历，
+    如果能找到比它大的，就记下第一个比它大的数，否则记为-1
+*/
+class Solution {
+    public int[] nextGreaterElement(int[] nums1, int[] nums2) {
+        int m = nums1.length;
+        int n = nums2.length;
+        int[] result = new int[m];
+        for(int i = 0; i < m; i++)
+        {
+            for(int j = 0; j < n; j++)
+            {
+                if(nums1[i] == nums2[j])
+                {
+                    int flag = 0;
+                    for(int k = j + 1; k < n; k++)
+                    {
+                        if(nums2[k] > nums1[i])
+                        {
+                            flag = 1;
+                            result[i] = nums2[k];
+                            break;
+                        }
+                    }
+                    if(flag == 0) result[i] = -1;
+                    break;
+                }
+            }
+        }
+
+        return result;
+    }
+}
+
+#2. use stack to solve this problem
+use a stack to store the nums in nums2, maintain the decreasing property, which means the s.peek is always the smallest number
+for a new number in nums2, if nums2 > s.peek, which means that s.peek's next number is nums2, so we store this information in the map.
+始终用stack来维护一个递减的数列
+For example :
+For example [9, 8, 7, 3, 2, 1, 6]
+The stack will first contain [9, 8, 7, 3, 2, 1] and then we see 6 which is greater than 1
+so we pop 1 2 3 whose next greater element should be 6. map : [1,6], [2, 6], [3, 6].
+The time complexity is O(m + n);
+
+        int m = nums1.length;
+        int[] result = new int[m];
+        Map<Integer, Integer> map = new HashMap<>();
+        Stack<Integer> s = new Stack<>();
+        for(int num : nums2)
+        {
+            while(!s.isEmpty() && s.peek() < num)
+            {
+                map.put(s.pop(), num);
+            }
+            s.push(num);
+        }
+        for(int i = 0; i < nums1.length; i++)
+        {
+            if(map.containsKey(nums1[i]))
+                result[i] = map.get(nums1[i]);
+            else
+                result[i] = -1;
+        }
+        return result;

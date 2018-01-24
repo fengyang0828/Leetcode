@@ -1,0 +1,130 @@
+Given a matrix of m x n elements (m rows, n columns), return all elements of the matrix in spiral order.
+For example,
+Given the following matrix:
+[
+ [ 1, 2, 3 ],
+ [ 4, 5, 6 ],
+ [ 7, 8, 9 ]
+]
+You should return [1,2,3,6,9,8,7,4,5].
+
+#1. recursive way, focus on some special cases!
+class Solution {
+    List<Integer> result;
+    public List<Integer> spiralOrder(int[][] matrix) {
+        result = (ArrayList) new ArrayList<>();
+        if(matrix == null || matrix.length == 0 || matrix[0].length == 0)
+            return result;
+        int m = matrix.length;
+        int n = matrix[0].length;
+        helper(matrix, 0, m - 1, 0, n - 1);
+        return result;
+    }
+
+    public void helper(int[][] matrix, int up, int down, int left, int right)
+    {
+        if(up > down || left > right) return;
+        // special case 1:
+        if(up == down && left == right)
+        {
+            result.add(matrix[up][left]);
+            return;
+        }
+        //special case 2:
+        if(up == down)
+        {
+            // add the up line;
+            for(int i = left; i <= right; i++)
+            {
+                result.add(matrix[up][i]);
+            }
+            return;
+        }
+        //special case 3
+        if(left == right)
+        {
+            for(int i = up ; i <= down; i++)
+            {
+                result.add(matrix[i][right]);
+            }
+            return;
+        }
+        // add the up line;
+        for(int i = left; i <= right; i++)
+        {
+            result.add(matrix[up][i]);
+        }
+        // add the right line;
+        for(int i = up + 1; i <= down; i++)
+        {
+            result.add(matrix[i][right]);
+        }
+
+        // add the bottom line;
+        for(int i = right - 1; i >= left; i--)
+        {
+            result.add(matrix[down][i]);
+        }
+
+        // add the left line
+        for(int i = down - 1; i > up; i--)
+        {
+            result.add(matrix[i][left]);
+        }
+
+        helper(matrix, up + 1, down - 1, left + 1, right - 1);
+    }
+}
+
+
+#2.Iterative way:
+
+    List<Integer> result;
+    public List<Integer> spiralOrder(int[][] matrix) {
+        result = (ArrayList) new ArrayList<>();
+        if(matrix == null || matrix.length == 0 || matrix[0].length == 0)
+            return result;
+        int m = matrix.length;
+        int n = matrix[0].length;
+        //helper(matrix, 0, m - 1, 0, n - 1);
+        //result = new int[n][n];
+        int up = 0;
+        int down = m - 1;
+        int left = 0;
+        int right = n - 1;
+        while(up <= down && left <= right)
+        {
+            for(int i = left; i <= right; i++)
+            {
+                result.add(matrix[up][i]);
+            }
+            up ++;
+            // add the right line;
+            for(int i = up; i <= down; i++)
+            {
+                result.add(matrix[i][right]);
+            }
+            right--;
+            // add the bottom line;
+            if(up <= down)
+            {
+                for(int i = right; i >= left; i--)
+                {
+                    result.add(matrix[down][i]);
+                }
+                down--;
+            }
+
+            if(left <= right)
+            {
+                // add the left line
+                for(int i = down; i >= up; i--)
+                {
+                    result.add(matrix[i][left]);
+                }
+                left++;
+            }
+
+        }
+        return result;
+    }

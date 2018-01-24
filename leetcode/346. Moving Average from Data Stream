@@ -1,0 +1,67 @@
+
+1. This solution cost O(n) in LinkedList, we can simplify it.
+class MovingAverage {
+
+    /** Initialize your data structure here. */
+    int globalsize = 0;
+    LinkedList<Integer> q;
+    public MovingAverage(int size) {
+
+        q = new LinkedList<Integer>();
+        globalsize = size;
+
+    }
+
+    public double next(int val) {
+        if(globalsize > q.size())
+        {
+            q.add(val);
+        }
+        else
+        {
+            q.remove(0);
+            q.add(val);
+        }
+        int sum = 0;
+        for(int i = 0; i < q.size(); i++)
+        {
+            sum += q.get(i);
+        }
+        double avg = (double)sum / (double)q.size();
+        return avg;
+
+    }
+}
+
+/**
+ * Your MovingAverage object will be instantiated and called as such:
+ * MovingAverage obj = new MovingAverage(size);
+ * double param_1 = obj.next(val);
+ */
+
+ 2. Queue is a better solution in this problem. With O(1)
+
+ class MovingAverage {
+
+     /** Initialize your data structure here. */
+     int globalsize = 0;
+     Queue <Integer> q;
+     int preSum = 0;
+     public MovingAverage(int size) {
+         q = new LinkedList<Integer>();
+         globalsize = size;
+     }
+
+     public double next(int val) {
+         if(globalsize <= q.size())
+         {
+             preSum -= q.poll();
+
+         }
+
+         q.offer(val);
+         preSum += val;
+         double avg = (double)preSum / (double)q.size();
+         return avg;
+     }
+ }

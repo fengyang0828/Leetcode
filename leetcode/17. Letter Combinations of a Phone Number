@@ -1,0 +1,73 @@
+#1. simple DFS
+HashMap<Character, String> map;
+    List<String> result;
+    String curstr = "";
+    public List<String> letterCombinations(String digits) {
+        map = new HashMap<>();
+        result = (ArrayList) new ArrayList<>();
+        if(digits.length() == 0 || digits == null)
+            return result;
+        map.put('2', "abc");
+        map.put('3', "def");
+        map.put('4', "ghi");
+        map.put('5', "jkl");
+        map.put('6', "mno");
+        map.put('7', "pqrs");
+        map.put('8', "tuv");
+        map.put('9', "wxyz");
+
+        helper(digits, 0);
+        return result;
+    }
+
+    public void helper(String digits, int start)
+    {
+        if(start == digits.length())
+        {
+            result.add(curstr);
+            return;
+        }
+        char c = digits.charAt(start);
+        String value = map.get(c);
+        for(int j = 0; j < value.length(); j ++)
+            {
+                curstr = curstr + ""+value.charAt(j);
+                helper(digits, start + 1);
+                int len = curstr.length();
+                curstr = curstr.substring(0, len - 1);
+            }
+        }
+    }
+
+#2. Iterative
+two cases :
+case one: if it is the first element in the digits, then just add the value of this element into result
+case two: if it is not the first element, we have to new a subresult, traverse the result, and add the new element at the end
+          after traverse, then make subresult equal to result
+public List<String> letterCombinations(String digits) {
+        String[] value = new String[] {"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+        List<String> result = (ArrayList) new ArrayList<>();
+        for(int i = 0; i < digits.length(); i++)
+        {
+            List<String> sub = (ArrayList) new ArrayList<>();
+            String subvalue = value[digits.charAt(i) - '0'];
+            for(int j = 0; j < subvalue.length(); j++)
+            {
+                if(i == 0)
+                {
+                    result.add(""+subvalue.charAt(j));
+                }
+                else
+                {
+                    for(int k = 0; k < result.size(); k++)
+                    {
+                        sub.add(result.get(k) + ""+subvalue.charAt(j));
+                    }
+
+                }
+            }
+            if(i != 0)
+                result = sub;
+        }
+        return result;
+    }

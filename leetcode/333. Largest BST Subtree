@@ -1,0 +1,96 @@
+#1. Solution:
+the running time is O(n^2) in the worst case, for every node i did isBST and count.
+class Solution {
+
+    int max = Integer.MIN_VALUE;
+    int min = Integer.MAX_VALUE;
+    int largest = -1;
+    public int largestBSTSubtree(TreeNode root) {
+        if(root == null) return 0;
+        helper(root);
+        return largest;
+    }
+
+    public void helper(TreeNode root)
+    {
+        if(root == null) return;
+        helper(root.left);
+        if(isBST(root, Long.MIN_VALUE, Long.MAX_VALUE))
+        {
+            largest = Math.max(largest, caculate(root));
+        }
+        helper(root.right);
+    }
+
+    public boolean isBST(TreeNode root, Long min, Long max)
+    {
+        if(root == null) return true;
+        if(root.val <= min || root.val >= max) return false;
+        boolean left = isBST(root.left, min, (long)root.val);
+        boolean right = isBST(root.right, (long)root.val, max);
+        return left && right;
+    }
+
+    public int caculate(TreeNode root)
+    {
+        if(root == null) return 0;
+        int left = caculate(root.left);
+        int right = caculate(root.right);
+        return left + right + 1;
+    }
+}
+
+#2. O(n)
+
+// use a int[] result to store the result of every node, there are three state for every node
+result[0]: to define if it is a BST, not a BST: -1
+result[1]: the min of the leftsubtree
+result[2]: the max of the rightsubtree
+firstly, we use postorder
+1. the node is null, then result[0] = 0
+2. the node is a leaf node, (its lefttree's result[0] == 0 && righttree's result[0] == 0), it is a BST
+3. the node is a internal node, its root.val > leftsubtree's max && root.val < rightsubtree's min, and left & right != -1 it is a BST
+    case 2 and 3 : result[0] = leftsize + rightsize + 1
+4. other: not a BST, result[0] = -1
+
+//O(n) time complexity:
+    int largest = -1;
+    public int largestBSTSubtree(TreeNode root) {
+        if(root == null) return 0;
+        helper(root);
+        return largest;
+    }
+
+    public int[] helper(TreeNode root)
+    {
+        int[] result = new int[3];
+        int[] left_result = new int[3];
+        int[] right_result = new int[3];
+        if(root == null)
+        {
+            return result;
+        }
+        left_result = helper(root.left);
+        right_result = helper(root.right);
+        if((left_result[0] == 0 || (left_result[0] > 0 && left_result[2] < root.val))
+           &&(right_result[0] == 0 ||(right_result[0] > 0 && right_result[1] > root.val)))
+        {
+            result[0] = left_result[0] + right_result[0] + 1;
+            largest = Math.max(result[0], largest);
+            int min = 0;
+            if(left_result[0] == 0)
+                min = root.val;
+            else
+                min = left_result[1];
+            int max = 0;
+            if(right_result[0] == 0)
+                max = root.val;
+            else
+                max = right_result[2];
+            result[1] = min;
+            result[2] = max;
+        }
+        else
+            result[0] = -1;
+        return result;
+    }

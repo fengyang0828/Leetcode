@@ -1,0 +1,50 @@
+ #1.recursive way:
+    public double myPow(double x, int num)
+    {
+        return myPow(x, (long) num);
+    }
+    public double myPow(double x, long n)
+    {
+        if(n < 0)
+        {
+            n = -n;
+            x = 1 / x;
+        }
+        if(n == 0)
+        {
+            return 1;
+        }
+
+        if(n % 2 == 0)
+            return myPow(x * x, n / 2);
+        else
+            return x*myPow(x * x, n / 2);
+    }
+#2. bit maniputation
+
+public double myPow(double x, int n) {
+
+        long num = n;
+        if(num < 0)
+        {
+            num = -num;
+            x = 1 / x;
+        }
+
+        if( num == 0 )
+            return 1;
+
+        double temp = 1;
+
+        for (long i = num; i > 0; i = i >> 1)
+        {
+            if( (i & 1) == 1 )
+            {
+                temp = temp * x;
+            }
+            x = x * x;
+        }
+
+        return temp;
+
+    }

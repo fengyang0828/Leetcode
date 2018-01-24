@@ -1,0 +1,59 @@
+// Follow up: change the hashmap to a set, to store all the index of the specific element.
+class RandomizedCollection {
+
+    HashMap<Integer, Set<Integer>> map;
+    List<Integer> nums;
+    java.util.Random rand = new java.util.Random();
+
+    /** Initialize your data structure here. */
+    public RandomizedCollection() {
+        map = new HashMap<>();
+        nums = (ArrayList) new ArrayList<>();
+    }
+
+    /** Inserts a value to the collection. Returns true if the collection did not already contain the specified element. */
+    public boolean insert(int val) {
+        boolean bool = map.containsKey(val);
+        if (!bool)
+        {
+            map.put(val, new HashSet<Integer>());
+        }
+        map.get(val).add(nums.size());
+        nums.add(val);
+        return !bool ;
+    }
+
+    /** Removes a value from the collection. Returns true if the collection contained the specified element. */
+    public boolean remove(int val) {
+        if (nums.size() == 0 || !map.containsKey(val))
+            return false;
+        int index =  map.get(val).iterator().next();
+        map.get(val).remove(index);
+        if (index < nums.size() - 1)
+        {
+            int last_element = nums.get(nums.size() - 1);
+            nums.set(index, last_element);
+            int lastlistlength = map.get(last_element).size();
+            map.get(last_element).remove(nums.size() - 1);
+            map.get(last_element).add(index);
+        }
+        nums.remove(nums.size() - 1);
+        if(map.get(val).isEmpty())
+            map.remove(val);
+        return true;
+
+    }
+
+    /** Get a random element from the collection. */
+    public int getRandom() {
+        return nums.get(rand.nextInt(nums.size()));
+    }
+}
+
+/**
+ * Your RandomizedCollection object will be instantiated and called as such:
+ * RandomizedCollection obj = new RandomizedCollection();
+ * boolean param_1 = obj.insert(val);
+ * boolean param_2 = obj.remove(val);
+ * int param_3 = obj.getRandom();
+ */

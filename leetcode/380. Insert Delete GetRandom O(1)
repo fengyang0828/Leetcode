@@ -1,0 +1,67 @@
+＃1. if we use list.remove() must cost O(n) so if we need O(1) must use map
+Use 1 map and 1 list to store all the information, map is used to store the index of the element in the list, so we can remove it very fast.
+Otherwise, we will cause O(n) to remove.
+
+Only special is remove: only remove the last element will cause O(1)
+So, we must firstly swap the element that needed to be removed and the last element, then remove the last one
+Not really swap, we can only set the index of the value to be lastone, and this is equal to delete this element.
+
+class RandomizedSet {
+
+    /** Initialize your data structure here. */
+    HashMap<Integer, Integer> map;
+    List<Integer> nums;
+    java.util.Random rand = new java.util.Random();
+    public RandomizedSet() {
+        map = new HashMap<>();
+        nums = (ArrayList) new ArrayList<>();
+    }
+
+    /** Inserts a value to the set. Returns true if the set did not already contain the specified element. */
+    public boolean insert(int val) {
+        if(map.containsKey(val))
+            return false;
+        else
+        {
+            map.put(val, nums.size());
+            nums.add(val);
+            return true;
+        }
+    }
+
+    /** Removes a value from the set. Returns true if the set contained the specified element. */
+    public boolean remove(int val) {
+        if(!map.containsKey(val) || map.size() == 0)
+            return false;
+        else
+        {
+            int index = map.get(val);
+            if(index < nums.size() - 1)
+            {
+                int last_element = nums.get(nums.size() - 1);
+                // 给这个index赋了新值相当于删除了这个index
+                nums.set(index, last_element);
+                map.put(last_element, index);
+            }
+
+        }
+        map.remove(val);
+        nums.remove(nums.size() - 1);
+        return true;
+
+    }
+
+    /** Get a random element from the set. */
+    public int getRandom() {
+        int random = nums.get(rand.nextInt(nums.size()));
+        return random;
+    }
+}
+
+/**
+ * Your RandomizedSet object will be instantiated and called as such:
+ * RandomizedSet obj = new RandomizedSet();
+ * boolean param_1 = obj.insert(val);
+ * boolean param_2 = obj.remove(val);
+ * int param_3 = obj.getRandom();
+ */

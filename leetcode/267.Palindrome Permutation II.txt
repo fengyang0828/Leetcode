@@ -1,0 +1,156 @@
+class Solution {
+// find out all the character that appear twice or more and only permute this character and append reverse of these character
+// The world's most ugly coding,
+    static List<String> result = null;
+    static StringBuilder str = null;
+    static List<String> halfresult = null;
+    static Set<String> alreadyexist = null;
+
+
+    public static List<String> generatePalindromes(String s) {
+        result = (ArrayList)new ArrayList<String>();
+        halfresult = (ArrayList)new ArrayList<String>();
+        str = new StringBuilder();
+
+        alreadyexist = new HashSet<String>();
+
+        if(s.length() == 0 || s == null)
+            return result;
+        else if(s.length() == 1)
+        {
+            result.add(s);
+            return result;
+        }
+
+        HashSet<Character> set = new HashSet<Character>();
+        for(int i = 0; i < s.length(); i++)
+        {
+            char c = s.charAt(i);
+            if(!set.contains(c))
+            {
+                set.add(c);
+            }
+            else
+            {
+                set.remove(c);
+                str.append(Character.toString(c));
+            }
+        }
+
+        System.out.println(str);
+        if(set.size() > 1)
+            return result;
+        char[] array = str.toString().toCharArray();
+        Permutation(array, 0, array.length);
+        if(set.size() == 1)
+        {
+            for(int i = 0; i < halfresult.size(); i++)
+            {
+                String left = halfresult.get(i);
+                char mid = '0';
+                Iterator<Character> it = set.iterator();
+                while(it.hasNext())
+                {
+                    mid = it.next();
+                }
+                String right = (new StringBuilder().append(left).reverse().toString());
+                result.add(left + mid + right);
+            }
+            return result;
+        }
+        else
+        {
+            for(int i = 0; i < halfresult.size(); i++)
+            {
+                String left = halfresult.get(i);
+                left += (new StringBuilder().append(left).reverse().toString());
+                result.add(left);
+            }
+            return result;
+
+        }
+
+    }
+
+    public static void Permutation(char[] array, int start, int length)
+    {
+        if(start == length)
+        {
+            halfresult.add(String.valueOf(array));
+            return;
+        }
+
+        for(int i = start; i < length; i++)
+        {
+            swap(array, i , start);
+            if(!alreadyexist.contains(Arrays.toString(array)))
+            {
+                Permutation(array, start + 1, length);
+                alreadyexist.add(Arrays.toString(array));
+            }
+            swap(array, i, start);
+        }
+        return;
+    }
+
+    public static  void swap(char[] array, int m, int n)
+    {
+        char temp = array[m];
+        array[m] = array[n];
+        array[n] = temp;
+    }
+
+    // will get TLE
+        List<String> result = null;
+        StringBuilder sb;
+        public List<String> generatePalindromes(String s) {
+            result = (ArrayList) new ArrayList<>();
+            sb = new StringBuilder();
+            helper(s.toCharArray(), 0);
+            return result;
+        }
+
+        public void helper(char[] array, int start)
+        {
+            if(start == array.length)
+            {
+                if(isPalindrome(sb.toString()))
+                {
+                    if(!result.contains(sb.toString()))
+                        result.add(sb.toString());
+                }
+
+            }
+
+            for(int i = start; i < array.length; i++)
+            {
+                swap(array, i, start);
+                sb.append(array[start]);
+                helper(array, start + 1);
+                swap(array, i, start);
+                sb.deleteCharAt(sb.length() - 1);
+            }
+        }
+
+        public boolean isPalindrome(String s)
+        {
+            int m = 0;
+            int n = s.length() - 1;
+            while(m < n)
+            {
+                if(s.charAt(m) != s.charAt(n))
+                    return false;
+                m ++;
+                n --;
+            }
+            return true;
+        }
+
+        public  void swap(char[] array, int m, int n)
+        {
+            char temp = array[m];
+            array[m] = array[n];
+            array[n] = temp;
+        }
+
+}

@@ -1,0 +1,30 @@
+brute force:
+for every number we calculate the number of bits
+and find out if the bit is a prime number
+public int countPrimeSetBits(int L, int R) {
+        int count = 0;
+        for(int i = L; i <= R; i++)
+        {
+            int bits = 0;
+            for(int j = i; j > 0; j = j >> 1)
+            {
+                if((j & 1) == 1)
+                    bits ++;
+            }
+            if(bits < 2) continue;
+            int flag = 0;
+            for(int k = 2; k <= Math.sqrt(bits); k++)
+            {
+                if(bits % k == 0)
+                {
+                    flag = 1;
+                    break;
+                }
+            }
+            if(flag == 0) count ++;
+        }
+        return count;
+    }
+
+Since the number is not more than 10^6, so the bit number will not more than 20, so we can use the set to make it faster.
+Set<Integer> primes = new HashSet<>(Arrays.asList(2, 3, 5, 7, 11, 13, 17, 19, 23, 29 ));

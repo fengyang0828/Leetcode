@@ -1,0 +1,43 @@
+#1. Solution1:Dp
+
+    2-D DPquestion
+    dp[i][j] means that from 0,0 to i,j, we have how many unique paths.
+    return dp[m - 1][n - 1] is the answer
+
+    the transition function is dp[i][j] = dp[i - 1][j] + dp[i][j - 1]
+    base case is dp[0][k] is 1, dp[k][0] = 1;
+
+    // focus on the base case question!!!!
+    public int uniquePaths(int m, int n) {
+        int[][] dp = new int[m][n];
+        if(m <= 0 || n <= 0)
+            return 0;
+        for(int i = 0; i <m; i++)
+            dp[i][0] = 1;
+        for(int j = 0; j <n; j++)
+            dp[0][j] = 1;
+        for(int i = 1; i < m; i++)
+            for(int j = 1; j <n; j++)
+            {
+                dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+            }
+        return dp[m-1][n-1];
+    }
+
+#2. 1-D solution:
+
+    optimize to the 1-D problem
+    since we know that for each i,j we only need to know its previous row and column,i-1,j and i,j-1
+    and we traverse the 2-d array by row, so we only need to store the column dp, DP[j] in the array is the i-1,j
+    dp[n - 1] is the answer
+     public int uniquePaths(int m, int n) {
+         int[] dp = new int[n];
+         for(int i = 0; i < n; i++)
+             dp[i] = 1;
+         for(int i = 1; i < m; i++)
+             for(int j = 1; j < n; j++)
+             {
+                 dp[j] = dp[j-1] + dp[j];
+             }
+         return dp[n - 1];
+     }

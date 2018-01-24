@@ -1,0 +1,68 @@
+class Solution {
+
+    List<List<Integer>> result = null;
+    List<Integer> currlist = null;
+    public List<List<Integer>> permute(int[] nums) {
+
+        result = (ArrayList)new ArrayList<List<Integer>>();
+        currlist = (ArrayList)new ArrayList<Integer>();
+        backtrack(nums, 0, nums.length);
+        return result;
+    }
+
+    // backtrack method
+    该算法采用DFS递归的方法，每次从当前元素出发，依次与它后面的元素交换，
+    到序列结尾时表示完成一次全排列，输出结果。注意，每次递归返回后再把元素交换回来，
+    否则会出现重复序列。该算法时间复杂度为O(n!)，序列不是递增的。例如对“123”全排列的结果为：123 132 213 231 321 312。
+    public void backtrack(int[] array, int start, int end)
+    {
+        if(start == end)
+        {
+            List<Integer> clone = (ArrayList)new ArrayList<Integer>(currlist);
+            result.add(clone);
+            return;
+        }
+
+        for (int i = start; i < end; i++)
+        {
+            swap(array, i, start);
+            currlist.add(array[start]);
+            backtrack(array, start + 1, end);
+            swap(array, i, start);
+            currlist.remove(currlist.size() - 1);
+        }
+        return;
+    }
+
+    public void swap(int[] array, int m, int n)
+    {
+        int temp = array[m];
+        array[m] = array[n];
+        array[n] = temp;
+    }
+
+    // 不使用currlist的另一种做法：
+    public static void Permutation(char[] array, int start, int length)
+        {
+            if(start == length)
+            {
+                if(!halfresult.contains(String.valueOf(array)))
+                    halfresult.add(String.valueOf(array));
+                return;
+            }
+            // 这里避免重复可以优化很多！！！！！或者用老方法alreadyexist 来避免重复
+            // 什么情况下用currlist： 当要求返回List<List<Integer>>
+            // 其余情况可以不用currlist
+            char prev = 0;
+            for(int i = start; i < length; i++)
+            {
+                if(prev == array[i]) continue;
+                prev = array[i];
+                swap(array, i , start);
+                Permutation(array, start + 1, length);
+                swap(array, i, start);
+            }
+            return;
+
+        }
+}

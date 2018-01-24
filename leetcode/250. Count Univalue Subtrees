@@ -1,0 +1,60 @@
+#1. binary tree
+point is that we know if a tree is a unvalue tree, its
+class Solution {
+
+    int count = 0;
+    public int countUnivalSubtrees(TreeNode root) {
+        if(root == null) return 0;
+        // for each node, we should verify if its subtree is unival tree and root.val == root.right.val == root.left.val, then count ++;
+        // we should remember to traverse every node, if the root not satisfy, the left or the right will satisfy either.
+        isUnivalSubtree(root);
+        return count;
+    }
+
+    public boolean isUnivalSubtree(TreeNode root)
+    {
+        if(root == null) return true;
+        if(root.left == null && root.right == null)
+        {
+            count++;
+            return true;
+        }
+
+        if(root.left != null && root.right == null)
+        {
+            boolean left = isUnivalSubtree(root.left);
+            if(left && root.val == root.left.val)
+            {
+                count++;
+                return true;
+            }
+            else
+                return false;
+        }
+
+        if(root.right != null && root.left == null)
+        {
+            boolean right = isUnivalSubtree(root.right);
+            if(right && root.val == root.right.val)
+            {
+                count++;
+                return true;
+            }
+            return false;
+        }
+
+        if(root.right != null && root.left != null)
+        {
+            boolean a = isUnivalSubtree(root.left);
+            boolean b = isUnivalSubtree(root.right);
+            if(a && b && root.val == root.left.val && root.val == root.right.val)
+            {
+                count++;
+                return true;
+            }
+            return false;
+        }
+
+        return false;
+    }
+}

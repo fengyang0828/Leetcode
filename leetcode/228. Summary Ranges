@@ -1,0 +1,72 @@
+#1. traverse the nums array once and use two pointer i and j
+i means that start of the range
+j means that end of the range
+use while loop to find j's position
+if i == j, means that this range only contains one number
+if j != i, means this range contains from i to j
+
+be careful of the corner!!
+case 1: the nums only has one element
+case 2: the last element
+The time complexity is O(n)
+
+class Solution {
+    public List<String> summaryRanges(int[] nums) {
+        List<String> result = (ArrayList) new ArrayList<String>();
+        int left= 0;
+        int right = 0;
+        if(nums.length == 1) result.add(String.valueOf(nums[0]));
+        for(int i = 0; i < nums.length - 1;)
+        {
+            left = nums[i];
+            int j = i;
+            while(j < nums.length - 1&& nums[j] == nums[j + 1] - 1)
+            {
+                right = nums[j + 1];
+                j ++;
+            }
+            if (j == i)
+            {
+                result.add(String.valueOf(left));
+                i ++;
+                if(i == nums.length - 1) result.add(String.valueOf(nums[i]));
+            }
+            else if(j != i)
+            {
+                result.add(String.valueOf(left) + "->" + String.valueOf(right));
+                i = j + 1;
+                if(i == nums.length - 1) result.add(String.valueOf(nums[i]));
+            }
+        }
+        return result;
+    }
+}
+
+#2. more clearly way
+
+        public List<String> summaryRanges(int[] nums) {
+        List<String> result = (ArrayList) new ArrayList<String>();
+        if(nums.length == 1) {
+            result.add(String.valueOf(nums[0]));
+            return result;
+        }
+        for(int i = 0; i < nums.length;)
+        {
+            int j = i;
+            while(j < nums.length - 1&& nums[j] == nums[j + 1] - 1)
+            {
+                j ++;
+            }
+            if (j == i)
+            {
+                result.add(String.valueOf(nums[i]));
+                i ++;
+            }
+            else
+            {
+                result.add(String.valueOf(nums[i]) + "->" + String.valueOf(nums[j]));
+                i = j + 1;
+            }
+        }
+        return result;
+    }

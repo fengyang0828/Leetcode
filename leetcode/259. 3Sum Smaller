@@ -1,0 +1,63 @@
+#1. brute force: choose three from the array, and find all pairs that satisfy sum < target
+    The time complexity is actually O(n ^ 3) since Cn 3 will need n(n - 1)(n) / 6
+class Solution {
+    // ask if it can contain duplicate numbers
+
+    List<Integer> currlist;
+    int count = 0;
+    public int threeSumSmaller(int[] nums, int target) {
+        currlist = (ArrayList) new ArrayList<>();
+        choosethree(nums, 0, 3, target);
+        return count;
+
+    }
+    public void choosethree(int[] nums, int start, int number, int target)
+    {
+        if(number == 0)
+        {
+            List<Integer> clone = (ArrayList)new ArrayList<Integer>(currlist);
+            int sum = 0;
+            for(Integer i: clone)
+            {
+                sum += i;
+            }
+            if(sum < target)
+                count ++;
+            return;
+        }
+        if(start == nums.length)
+            return;
+
+        currlist.add(nums[start]);
+        choosethree(nums, start + 1, number - 1, target);
+        currlist.remove(currlist.size() - 1);
+        choosethree(nums, start + 1, number, target);
+        return;
+
+    }
+}
+
+#2. time complexity is O(n^2)
+We sort the array first. Then, for each element, we use the two pointer approach to find the number of triplets that meet the requirements.
+initial left as the next element of i, initial right as the end of the num array, if nums[right] can meet the requirement, then all the element
+between left and right can meet, so we simply add right - left to the result
+public int threeSumSmaller(int[] nums, int target) {
+        Arrays.sort(nums);
+        int count = 0;
+        for(int i = 0; i < nums.length() - 2; i++)
+        {
+            int left = i + 1;
+            int right = nums.length() - 1;
+            while(left < right)
+            {
+                if(nums[i] + nums[left] + nums[right] < target)
+                {
+                    count += right - left;
+                    left ++;
+                }
+                else
+                    right--;
+            }
+        }
+        return count;
+    }

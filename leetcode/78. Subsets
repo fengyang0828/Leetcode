@@ -1,0 +1,95 @@
+class Solution {
+
+    List<List<Integer>> result = null;
+
+    public List<List<Integer>> subsets(int[] nums) {
+
+        result = (ArrayList) new ArrayList<ArrayList<Integer>>();
+        int n = nums.length;
+        int nbit = 1 << n;
+        for(int i = 0; i < nbit; i++)
+        {
+            List<Integer> currlist = new ArrayList<Integer>();
+            for(int j = 0; j < n; j++)
+            {
+                int temp = 1 << j;
+                if((temp & i) != 0)
+                {
+                    currlist.add(nums[j]);
+                }
+            }
+            result.add(currlist);
+        }
+        return result;
+    }
+}
+
+Solution 2: use backtrack
+import java.util.*;
+class Solution {
+
+    static List<List<Integer>> result = null;
+    static List<Integer> currlist = null;
+    public static List<List<Integer>> Combination(int[] nums) {
+
+        result = (ArrayList)new ArrayList<List<Integer>>();
+        currlist = (ArrayList)new ArrayList<Integer>();
+        for(int i = 0; i <= nums.length; i++)
+        {
+            backtrack(nums, 0,i, nums.length);
+        }
+        return result;
+    }
+
+    // backtrack select number from n elements
+    public static void backtrack(int[] array, int start, int number, int length)
+    {
+        if(number == 0)
+        {
+            List<Integer> clone = (ArrayList)new ArrayList<Integer>(currlist);
+            result.add(clone);
+            return;
+        }
+        if(start == length)
+            return;
+
+        currlist.add(array[start]);
+        backtrack(array, start + 1, number - 1,length);
+        currlist.remove(currlist.size() - 1);
+        backtrack(array, start + 1, number,length);
+        return;
+    }
+
+    public static void print()
+    {
+        for(int i = 0; i < result.size(); i++)
+        {
+            System.out.println(result.get(i));
+        }
+    }
+
+    public static void main(String args[])
+    {
+        int[] nums = {1,2,3};
+        permute(nums);
+        print();
+    }
+}
+
+Solution 3:
+    static List<List<Integer>> result = null;
+    static List<Integer> currlist = null;
+    public List<List<Integer>> subsets(int[] nums) {
+        result = new ArrayList<>();
+        currlist = new ArrayList<>();
+        backtrack(nums, 0);
+        return result;
+    }
+
+    private void backtrack(int [] nums, int start){
+        result.add(new ArrayList<>(currlist)); // the only difference is that everytime currlist will be add into result because it is no need to travel all the nums
+        for(int i = start; i < nums.length; i++){
+            currlist.add(nums[i]);
+            backtrack(nums, i + 1);
+            currlist.remove(currlist.size() - 1);
+    }

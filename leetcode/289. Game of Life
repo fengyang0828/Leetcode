@@ -1,0 +1,137 @@
+1. use an array to store the new information and use the old one just for checking
+
+Focus on two very important hints:
+
+first: i       int imin = Math.max(i - 1, 0);
+               int imax = Math.min(i + 1, m - 1);
+               int jmin = Math.max(j - 1, 0);
+               int jmax = Math.min(j + 1, n - 1);
+
+!!!very important, min = xx max
+and understand the problem!!!
+
+Any live cell with fewer than two live neighbors dies, as if caused by under-population.
+Any live cell with two or three live neighbors lives on to the next generation.
+Any live cell with more than three live neighbors dies, as if by over-population..
+Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
+
+第三条是说有三个存活的neighbour就会死亡！！！！
+只有在只有两个存活或三个存活的情况下才可存活！
+这道题的难点在于不能随意改变broad的值， 因为后面还要用
+
+所以我们就将broad的状态改为2 或者 3 来代表他在下一个state的状态
+
+2: 他原本活着但是他下一个state会死
+3: 他原本死了但是下一个state会活
+
+最后用 broad［i］［j］％＝ 2
+
+class Solution {
+    public void gameOfLife(int[][] board) {
+        int m = board.length;
+        int n = board[0].length;
+        for(int i = 0; i < m; i++)
+        {
+            for(int j = 0; j < n; j++)
+            {
+                int state = board[i][j];
+                int live = 0;
+                int imin = Math.max(i - 1, 0);
+                int imax = Math.min(i + 1, m - 1);
+                int jmin = Math.max(j - 1, 0);
+                int jmax = Math.min(j + 1, n - 1);
+                System.out.println(imin +"," + imax + ","+ jmin +"," +jmax);
+                for(int p = imin; p <= imax; p++)
+                {
+                    for(int q = jmin; q <= jmax; q++)
+                    {
+                        if(p == i && j == q) continue;
+                        if(board[p][q] == 1 || board[p][q] == 2)
+                            live ++;
+                    }
+                }
+                System.out.println("live:" + live);
+                if(board[i][j] == 0 && live == 3)
+                {
+                    board[i][j] = 3;
+                }
+                else if(board[i][j] == 1 && (live < 2 || live > 3))
+                {
+                    board[i][j] = 2;
+                }
+
+            }
+        }
+
+        for(int i = 0; i < m; i++)
+        {
+            for(int j = 0; j < n; j++)
+            {
+                System.out.println(board[i][j]);
+                board[i][j] = board[i][j] % 2;
+
+            }
+        }
+    }
+}
+
+Follow up:
+In this question, we represent the board using a 2D array.
+In principle, the board is infinite, which would cause problems when the active area encroaches
+the border of the array. How would you address these problems?
+
+当board是infinity的时候： 只存亮点坐标， 不存整个matrix
+用一个map存储每个亮点坐标的neighbour
+对于每个亮点坐标，遍历他的8个邻居所在坐标（coordinate），通知每个邻居的neighbour都得 + 1.
+对于neighbour这个map中的cell, if 满足条件成为活的
+
+private static class Coord {
+        int i;
+        int j;
+        private Coord(int i, int j) {
+            this.i = i;
+            this.j = j;
+        }
+        public boolean equals(Object o) {
+            return o instanceof Coord && ((Coord)o).i == i && ((Coord)o).j == j;
+        }
+        public int hashCode() {
+            int hashCode = 1;
+            hashCode = 31 * hashCode + i;
+            hashCode = 31 * hashCode + j;
+            return hashCode;
+        }
+
+private Set<Coord> gameOfLife(Set<Coord> live) {
+        Map<Coord,Integer> neighbours = new HashMap<>();
+        for (Coord cell : live) {
+            for (int i = cell.i-1; i<cell.i+2; i++) {
+                for (int j = cell.j-1; j<cell.j+2; j++) {
+                    if (i==cell.i && j==cell.j) continue;
+                    Coord c = new Coord(i,j);
+                    if (neighbours.containsKey(c)) {
+                        neighbours.put(c, neighbours.get(c) + 1);
+                    } else {
+                        neighbours.put(c, 1);
+                    }
+                }
+            }
+        }
+        这里只要cell.value == 3,加入
+        另一种情况是cell.value == 2并且原本是live 加入
+        Set<Coord> newLive = new HashSet<>();
+        for (Map.Entry<Coord,Integer> cell : neighbours.entrySet())  {
+            if (cell.getValue() == 3 || cell.getValue() == 2 && live.contains(cell.getKey())) {
+                newLive.add(cell.getKey());
+            }
+        }
+        return newLive;
+    }
+
+
+use a new object cell(i, j, state) to solve this problem.
+use a hashmap<cell, integer> hashmap to store the live number of neigbour of this cell.
+then traverse the hashmap to find the one need to be changed state(if integer > 3 || interger < 2).
+
+follow up是board很大只能存在disk里怎么办，解决方法是从file里每次读三行，算中间一行的下一轮状态，再用一行的extra memory 存储上一次状态就可以~
+第一行和最后一行例外，也要写完整代码

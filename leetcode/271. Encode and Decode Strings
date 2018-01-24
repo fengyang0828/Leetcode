@@ -1,0 +1,68 @@
+very important hint: in java, the function string[] array = string.split(), if string is empty, this will cause array.size = 1 not 0
+we should be careful about it.
+
+split("", limit):
+limit > 0 : If this is the case then the pattern will be
+            applied at most limit-1 times, the resulting
+            array’s length will not be more than n, and
+            the resulting array’s last entry will contain
+            all input beyond the last matched pattern.
+limit < 0 : In this case, the pattern will be applied as
+            many times as possible, and the resulting
+            array can be of any size.
+limit = 0 : In this case, the pattern will be applied as
+            many times as possible, the resulting array can
+            be of any size, and trailing empty strings will
+            be discarded.
+
+！！when limit < 0, every time we split, we will get one more "" at the last of the array!!!!!
+
+
+    // Encodes a list of strings to a single string.
+    public String encode(List<String> strs) {
+
+        StringBuffer sb = new StringBuffer();
+        for(String str: strs)
+        {
+            sb.append(str.replace("#", "##")).append(" # ");
+        }
+        return sb.toString();
+    }
+
+    // Decodes a single string to a list of strings.
+    public List<String> decode(String s) {
+        List<String> result = (ArrayList) new ArrayList<>();
+        String[] stringarray = s.split(" # ", -1);
+            //System.out.print("s:" + stringarray.length);
+        for(int i = 0; i < stringarray.length - 1; i++)
+        {
+            result.add(stringarray[i].replace("##", "#"));
+        }
+        return result;
+
+
+    }
+
+
+＃2. Solution 2
+为什么可以规避 num＃的风险在于每次都会使 start ＝ i ＋ len， 加上len以后就不会遇到中间的＃
+public static String encode(List<String> strs) {
+        StringBuffer ans = new StringBuffer();
+        for (String s : strs) {
+            ans.append(s.length()).append("#").append(s).append("#");
+        }
+        return ans.toString();
+    }
+
+    public static List<String> decode(String s) {
+        List<String> ans = new ArrayList<>();
+        int i = 0, start = 0;
+        while (start < s.length() && (i = s.indexOf("#", start)) != -1) {
+            int len = Integer.parseInt(s.substring(start, i));
+            i++;
+            String str = s.substring(i, i + len);
+            ans.add(str);
+            start = i + len + 1;
+        }
+        return ans;
+    }

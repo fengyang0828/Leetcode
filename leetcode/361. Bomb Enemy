@@ -1,0 +1,149 @@
+#1. brute force:
+    for every 0: we check the number of enemy in this row and column same with this 0
+    how to check the number of the ememy:
+    restriction is that the wall, we can find out the wall around this 0, and outside the wall, the enemy can not be killed
+    the enemy in the wall can be killed.
+
+    The time complexity is O(mn) * 2 * O(m + n) = O(mn) * O(m + n), no extra space.
+class Solution {
+    public int maxKilledEnemies(char[][] grid) {
+        int max = 0;
+        if(grid == null || grid.length == 0 || grid[0].length == 0)
+            return 0;
+        for(int i = 0; i < grid.length; i++)
+        {
+            for(int j = 0; j < grid[0].length; j++)
+            {
+                if(grid[i][j] == '0')
+                {
+                    //means we can put the bomb
+                    max = Math.max(max, checkenemy(i, j, grid));
+                }
+            }
+        }
+        return max;
+    }
+
+    public int checkenemy(int m, int n, char[][] grid)
+    {
+        int count = 0;
+        int leftwall = 0;
+        int rightwall = grid[m].length;
+        int upwall = 0;
+        int downwall = grid.length;
+        int i = n, j = n, p = m, q = m;
+        while(i >= 0)
+        {
+            if(grid[m][i] == 'W')
+            {
+                leftwall = i;
+                break;
+            }
+            i--;
+        }
+        while(j < grid[0].length)
+        {
+            if(grid[m][j] == 'W')
+            {
+                rightwall = j;
+                break;
+            }
+            j++;;
+        }
+        while(p >= 0)
+        {
+            if(grid[p][n] == 'W')
+            {
+                upwall = p;
+                break;
+            }
+            p--;
+        }
+        while(q < grid.length)
+        {
+            if(grid[q][n] == 'W')
+            {
+                downwall = q;
+                break;
+            }
+            q++;
+        }
+
+        for(int x = leftwall; x < rightwall; x++)
+        {
+            if(grid[m][x] == 'E')
+                count ++;
+        }
+
+        for(int y = upwall; y < downwall; y++)
+        {
+            if(grid[y][n] == 'E')
+                count ++;
+        }
+        return count;
+    }
+}
+
+#2.
+traverse the grid twice,
+the first traverse is from up left to bottom right, to find the number of enemy that can be killed in the left and up
+the second traverse is from bottom right to up left, to find the number of enemy that can be killed in the right and
+buttom
+
+public int maxKilledEnemies(char[][] grid) {
+
+           if(grid == null || grid.length == 0 || grid[0].length == 0)
+                return 0;
+           int leftEnemycount = 0;
+           int[] colEnemycount = new int[grid[0].length];
+           for(int i = 0; i < grid.length; i++)
+           {
+               for(int j = 0; j < grid[0].length; j++)
+               {
+                   if(grid[i][j] == 'E')
+                   {
+                       leftEnemycount ++;
+                       colEnemycount[j] ++;
+                   }
+                   else if(grid[i][j] == 'W')
+                   {
+                       leftEnemycount = 0;
+                       colEnemycount[j] = 0;
+                   }
+                   else
+                       grid[i][j] = (char)(leftEnemycount + colEnemycount[j]);
+               }
+               leftEnemycount = 0;
+           }
+
+           int max = 0;
+           int rightEnemycount = 0;
+           for(int i = 0; i < grid[0].length; i++)
+           {
+               colEnemycount[i] = 0;
+           }
+           for(int i = grid.length - 1; i >= 0; i--)
+           {
+               for(int j = grid[0].length - 1; j >= 0; j--)
+               {
+                   if(grid[i][j] == 'E')
+                   {
+                       rightEnemycount ++;
+                       colEnemycount[j] ++;
+                   }
+                   else if(grid[i][j] == 'W')
+                   {
+                       rightEnemycount = 0;
+                       colEnemycount[j] = 0;
+                   }
+                   else
+                   {
+                       grid[i][j] += rightEnemycount + colEnemycount[j];
+                       max = Math.max(max, grid[i][j]);
+                   }
+               }
+               rightEnemycount = 0;
+           }
+           return max;
+       }
+

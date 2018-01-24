@@ -1,0 +1,91 @@
+#1. DFS
+// use backtrack, find all the possible break point
+    public List<String> wordBreak(String s, List<String> wordDict) {
+        List<String> words = (ArrayList) new ArrayList<>();
+        int len = s.length();
+        for(int i = len - 1; i >= 0; i--)
+        {
+            String last = s.substring(i, len);
+            if(wordDict.contains(last))
+            {
+                if(i == 0)
+                    words.add(last);
+                else
+                {
+                    String front = s.substring(0, i);
+                    List<String> sublist = wordBreak(front, wordDict);
+                    if(sublist != null)
+                    {
+                        for(String str : sublist)
+                        {
+                            words.add(str +" " + last);
+                        }
+                    }
+                }
+            }
+        }
+        return words;
+    }
+
+#2. DP + DFS
+    avoid unnecessary recursions
+    Map<String, List<String>> results = new HashMap<String, List<String>>();
+    public List<String> wordBreak(String s, List<String> wordDict) {
+        List<String> words = (ArrayList) new ArrayList<>();
+        int len = s.length();
+        for(int i = len - 1; i >= 0; i--)
+        {
+            String last = s.substring(i, len);
+            if(wordDict.contains(last))
+            {
+                if(i == 0)
+                    words.add(last);
+                else
+                {
+                    String front = s.substring(0, i);
+                    List<String> sublist = results.containsKey(front) ?
+                            results.get(front) : wordBreak(front, wordDict);
+                    if(sublist != null)
+                    {
+                        for(String str : sublist)
+                        {
+                            words.add(str +" " + last);
+                        }
+                    }
+                    results.put(front, sublist);
+                }
+            }
+        }
+        return words;
+    }
+
+#3. use fronttrack
+
+Map<String, List<String>> results = new HashMap<String, List<String>>();
+    public List<String> wordBreak(String s, List<String> wordDict) {
+        List<String> words = (ArrayList) new ArrayList<>();
+        int len = s.length();
+        for(int i = 1; i <= len; i++)
+        {
+            String front = s.substring(0, i);
+            if(wordDict.contains(front))
+            {
+                if(i == len)
+                    words.add(front);
+                else
+                {
+                    String last = s.substring(i, len);
+                    List<String> sublist = results.containsKey(last) ?
+                            results.get(last) : wordBreak(last, wordDict);
+                    if(sublist != null)
+                    {
+                        for(String str : sublist)
+                        {
+                            words.add(front +" " + str);
+                        }
+                    }
+                    results.put(last, sublist);
+                }
+            }
+        }
+        return words;

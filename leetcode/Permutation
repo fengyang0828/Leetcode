@@ -1,0 +1,99 @@
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
+public class dj {
+
+    static ArrayList <String> result = null;
+    static Set<String> alreadyexist = null;
+
+    public static void permute(String s)
+    {
+        result = new ArrayList<String>();
+        alreadyexist = new HashSet<String>();
+        permutehelper(s,"");
+    }
+
+
+// Complexitiy will be O(n!)
+    public static void permutehelper(String s, String chosen)
+    {
+        if(s.length() == 0)
+        {
+            result.add(chosen);
+        }
+
+        for(int i = 0; i < s.length(); i++)
+        {
+            // choose
+            char c = s.charAt(i);
+            chosen += c;
+            s = s.substring(0,i) + s.substring(i + 1, s.length());
+
+            // explore
+            if(!alreadyexist.contains(chosen))
+            {
+                permutehelper(s,chosen);
+                alreadyexist.add(chosen);
+            }
+
+            // unchoose
+            chosen = chosen.substring(0,chosen.length() - 1);
+            s = s.substring(0,i) + c + s.substring(i ,s.length());
+        }
+
+    }
+
+
+    public static void swap(char[] array)
+    {
+        int length = array.length;
+        result = new ArrayList<String>();
+        alreadyexist = new HashSet<String>();
+        swaphelper(array,0, length -1);
+    }
+
+
+    public static void swaphelper(char[] array, int start, int length) {
+        if (start >= length) {
+            result.add(Arrays.toString(array));
+            return;
+        }
+
+        for (int i = start; i <= length; i++) {
+
+            swaparray(array, i, start);
+
+            // when explore over, We can add it to alreadyexist
+            if(!alreadyexist.contains(Arrays.toString(array)))
+            {
+                // the sequence here is very important
+                swaphelper(array, start + 1, length);
+                alreadyexist.add(Arrays.toString(array));
+            }
+            swaparray(array, i, start);
+
+        }
+    }
+
+    public static void swaparray(char[] array, int m, int n)
+    {
+        char temp = array[m];
+        array[m] = array[n];
+        array[n] = temp;
+    }
+
+    public static void print()
+    {
+        for(int i = 0; i < result.size(); i++)
+        {
+            System.out.println(result.get(i));
+        }
+    }
+    public static void main(String args[])
+    {
+        String s = "AABC";
+        permute(s);
+        print();
+    }
+}

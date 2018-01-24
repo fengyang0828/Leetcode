@@ -1,0 +1,69 @@
+#1. binary tree:
+
+class Solution {
+
+    int max = 0;
+    public int longestUnivaluePath(TreeNode root) {
+        if(root == null) return 0;
+        dfs(root);
+        return max;
+    }
+
+    public int dfs(TreeNode root)
+    {
+        if(root == null)
+            return 0;
+        int left = dfs(root.left);
+        if(root.left != null)
+        {
+            if(root.val == root.left.val)
+                left++;
+            else left = 0;
+        }
+
+        int right = dfs(root.right);
+        if(root.right != null)
+        {
+            if(root.val == root.right.val)
+                right++;
+            else right = 0;
+        }
+        max = Math.max(left+right, max);
+        return Math.max (left, right);
+    }
+}
+
+#2. multiple tree
+static int totalmax = 0;
+    public int longestUnivaluePath() {
+        dfs(1);
+        return totalmax;
+
+    }
+    public int dfs(int v){
+        visited[v] = true;
+        int sum = 0;
+        int max = 0;
+        int sub_max = 0;
+        for(int w : adjacency.get(v)){
+            int temp = 0;
+            if(!visited[w]){
+                temp = dfs(w);
+                if(vertex[v] == vertex[w])
+                    temp ++;
+                else temp = 0;
+
+                if(temp >= max)
+                {
+                    sub_max = max;
+                    max = temp;
+                }
+                else if(sub_max <= temp && temp < max)
+                    sub_max = temp;
+
+                sum = sub_max + max;
+            }
+        }
+        totalmax = Math.max(totalmax,sum);
+        return max;
+    }

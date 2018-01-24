@@ -1,0 +1,83 @@
+#1. Solution one use one map and one set to solve this problem
+three cases:
+case 1: word.length < 3, which we ignore
+case 2: map contains key and key is created by the same string -> is unique
+case 3: map do not contains(means dict do not have) -> always unique
+other:
+
+class ValidWordAbbr {
+
+    HashMap<String, Integer> map;
+    HashSet<String> dict;
+    public ValidWordAbbr(String[] dictionary) {
+        map = new HashMap<>();
+        dict = new HashSet<>();
+        for(String s: dictionary)
+        {
+            dict.add(s);
+            int len = s.length();
+            if(len >= 3)
+            {
+                String temp = s.charAt(0) + String.valueOf(len - 2) + s.charAt(len - 1);
+                if(map.containsKey(temp))
+                    map.put(temp, map.get(temp) + 1);
+                else
+                    map.put(temp, 1);
+            }
+
+        }
+    }
+
+    public boolean isUnique(String word) {
+        if(word.length() <= 2) return true;
+        String temp = word.charAt(0) + String.valueOf(word.length() - 2) + word.charAt(word.length() - 1);
+        if(map.containsKey(temp))
+        {
+            if(map.get(temp) == 1 && dict.contains(word))
+            {
+                return true;
+            }
+            else if(map.get(temp) == 1 && !dict.contains(word))
+                return false;
+            else
+                return false;
+        }
+        else
+            return true;
+    }
+}
+
+#2. Solution 2: can simplify to one hashmap, if map already has temp, and temp is not created by map.get(temp), then map will be put 0
+HashMap<String, String> map;
+    public ValidWordAbbr(String[] dictionary) {
+        map = new HashMap<>();
+        for(String s: dictionary)
+        {
+            int len = s.length();
+            if(len >= 3)
+            {
+                String temp = s.charAt(0) + String.valueOf(len - 2) + s.charAt(len - 1);
+                if(map.containsKey(temp))
+                {
+                    if(!map.get(temp).equals(s))
+                        map.put(temp, "");
+                }
+                else
+                    map.put(temp, s);
+            }
+
+        }
+    }
+
+    public boolean isUnique(String word) {
+        if(word.length() <= 2) return true;
+        String temp = word.charAt(0) + String.valueOf(word.length() - 2) + word.charAt(word.length() - 1);
+        if(map.containsKey(temp))
+        {
+            if(!map.get(temp).equals(word))
+            {
+                return false;
+            }
+        }
+        return true;
+    }

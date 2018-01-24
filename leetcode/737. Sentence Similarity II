@@ -1,0 +1,52 @@
+The only difference with 734 is that now the pair is transitive
+which means: pairs: meal supper, supper dinner, even if there is no meal, dinner in dinner, we still consider they are pairs.
+
+
+// simple DFS like graph problem, for DFS, we need a visited array to mark whether it is visited!! and should empty it after one dfs.
+class Solution {
+
+    HashMap<String, Set<String>> pairinfo;
+    Set<String> visited;
+    public boolean areSentencesSimilarTwo(String[] words1, String[] words2, String[][] pairs) {
+
+        pairinfo = new HashMap<>();
+        visited = new HashSet<>();
+        int m = words1.length;
+        int n = words2.length;
+        if( m != n) return false;
+        for(String[] p: pairs)
+        {
+            if(!pairinfo.containsKey(p[0]))
+                pairinfo.put(p[0], new HashSet<>());
+            if(!pairinfo.containsKey(p[1]))
+                pairinfo.put(p[1], new HashSet<>());
+            pairinfo.get(p[1]).add(p[0]);
+            pairinfo.get(p[0]).add(p[1]);
+        }
+
+        for(int i = 0; i < m; i++)
+        {
+            if(words1[i].equals(words2[i])) continue;
+            if(!pairinfo.containsKey(words1[i])) return false;
+            visited = new HashSet<>();
+            if(!dfs(words1[i], words2[i])) return false;
+        }
+        return true;
+    }
+
+    public boolean dfs(String w1, String w2)
+    {
+        if(pairinfo.get(w1).contains(w2))
+            return true;
+        visited.add(w1);
+        for(String str: pairinfo.get(w1))
+        {
+            if(!visited.contains(str))
+            {
+                if(dfs(str, w2))
+                    return true;
+            }
+        }
+        return false;
+    }
+}

@@ -1,0 +1,86 @@
+#1. Top down(not solve by 2-d)
+    since it is a triangle, for every element which index is i in its row, it can only find next as nextlist.get(i) and
+    nextlist.get(i + 1), we want to find out the minimum path, so I think it is DP question
+    dp[j] represents from dp[0][0] to dp[i][j]'s minimum path.
+    int listsize = triangle.size();
+    int lastrowsize = triangle.get(listsize - 1).size();
+    return Math.min(dp[listsize - 1][k]) (0 < k < lastrowsize);
+
+
+    public int minimumTotal(List<List<Integer>> triangle) {
+            if(triangle == null || triangle.size() == 0) return 0;
+            int listsize = triangle.size();
+            int lastrowsize = triangle.get(listsize - 1).size();
+            int m = listsize;
+            int n = lastrowsize;
+            int[][] dp = new int[m][n];
+            dp[0][0] = triangle.get(0).get(0);
+            int r = 0;
+            for(List<Integer> row: triangle)
+            {
+                int c = 0;
+                for(int num: row)
+                {
+                    if(r == 0) continue;
+                    else if(c == 0) dp[r][c] = dp[r-1][c] + row.get(0);
+                    else
+                        dp[r][c] = Math.min(dp[r - 1][c - 1], dp[r - 1][c]) + row.get(c);
+                    c++;
+                }
+                r++;
+            }
+            int min = Integer.MAX_VALUE;
+            for(int i = 0; i < n; i++)
+            {
+                min = Math.min(min, dp[m - 1][i]);
+            }
+         return min;
+        }
+
+#2. 2-D DP, bottom to up
+    minpath[k][i] = min( minpath[k+1][i], minpath[k+1][i+1]) + triangle[k][i];
+    we can not use top to down, because it will be more tricky, bottom to up would be a good choice.
+    same idea, but we can simply return dp[0][0]
+        public int minimumTotal(List<List<Integer>> triangle) {
+            if(triangle == null || triangle.size() == 0) return 0;
+            int listsize = triangle.size();
+            int lastrowsize = triangle.get(listsize - 1).size();
+            int m = listsize;
+            int n = lastrowsize;
+            int[][] dp = new int[m][n];
+            for(int i = 0; i < n; i++)
+            {
+                dp[m - 1][i] = triangle.get(m - 1).get(i);
+            }
+            int r = m - 1;
+            for(int i = m - 2; i >= 0; i--)
+            {
+                for(int j = 0; j < triangle.get(i).size(); j++)
+                    dp[i][j] = Math.min(dp[i + 1][j + 1],dp[i + 1][j]) + triangle.get(i).get(j);
+            }
+            return dp[0][0];
+        }
+
+#3. 1-D
+    even better, since the row dp[k+1] would be useless after minpath[k] is computed,
+    we can simply set minpath as a 1D array, and iteratively update itself:
+
+    dp[i] = Math.min(dp[i],dp[i + 1]) + triangle.get(i).get(j)
+
+    if(triangle == null || triangle.size() == 0) return 0;
+            int listsize = triangle.size();
+            int lastrowsize = triangle.get(listsize - 1).size();
+            int m = listsize;
+            int n = lastrowsize;
+            int[] dp = new int[n];
+            for(int i = 0; i < n; i++)
+            {
+                dp[i] = triangle.get(m - 1).get(i);
+            }
+
+            for(int i = m - 2; i >= 0; i--)
+            {
+                for(int j = 0; j < triangle.get(i).size(); j++)
+                    dp[j] = Math.min(dp[j + 1],dp[j]) + triangle.get(i).get(j);
+            }
+            return dp[0];

@@ -1,0 +1,120 @@
+ #1. brute force will cause TLE
+    public List<List<Integer>> palindromePairs(String[] words) {
+        List<List<Integer>> list = (ArrayList) new ArrayList<ArrayList<Integer>>();
+        for(int i = 0; i < words.length; i++)
+        {
+            for(int j = 0; j < words.length; j++)
+            {
+                if(i == j) continue;
+                List<Integer> sub = (ArrayList) new ArrayList<>();
+                String temp = words[i] + words[j];
+                if(isPalindrome(temp))
+                {
+                    sub.add(i);
+                    sub.add(j);
+                    list.add(sub);
+                }
+
+            }
+        }
+        return list;
+    }
+
+    public boolean isPalindrome(String s)
+    {
+        int m = 0;
+        int n = s.length() - 1;
+        while(m < n)
+        {
+            if(s.charAt(m) != s.charAt(n))
+                return false;
+            m ++;
+            n --;
+        }
+        return true;
+    }
+
+#2. Palindrome should use reverse!!!! very important
+
+We should use set at first, because there may have repeated pairs during the traverse
+ public List<List<Integer>> palindromePairs(String[] words) {
+        // first, to ask if input will contain ""
+        // the idea is that for each word in words, we must split it from k = 0 to k = words[i].length
+        // -> make the string to two parts:
+        // -> left: words[i].substring(0, k + 1);
+        // -> right: words[i].substring(k + 1);
+        // there are two cases:
+        // 1. the left is palindrome, then we reverse the right, to find if the reversed right is in the map, if in, S2 + S1
+        // 2. the right is palindrome, then we reverse the left, to find if the reversed left is in the map, if in S1 + S2
+
+        ** we should cover all split cases:
+        case1: split at the left most
+        case2: split at the right most
+        case3: split in the middle
+        so the corner case should be very careful
+
+        HashMap<String, Integer> map = new HashMap<>();
+        Set<List<Integer>> list = new HashSet<>();
+        //List<List<Integer>> list = (ArrayList) new ArrayList<>();
+        for(int i = 0; i < words.length; i++)
+        {
+            map.put(words[i], i);
+        }
+
+        for(int i = 0; i < words.length; i++)
+        {
+            String cur = words[i];
+            // k must <= cur.length to make sure the right most case is covered
+               error knowledge, at first I use k < cur.length and substring(0, k + 1), this will cover the right most case, but not the left case
+            for(int k = 0; k <= cur.length(); k++)
+            {
+                String left = cur.substring(0, k);
+                String right = cur.substring(k, cur.length());
+                if(isPalindrome(left))
+                {
+                    String rev = reverse(right);
+                    if(map.containsKey(rev) && map.get(rev) != i)
+                    {
+                        List<Integer> sub = (ArrayList) new ArrayList<Integer>();
+                        sub.add(map.get(rev));
+                        sub.add(i);
+                        list.add(sub);
+                    }
+                }
+                if(isPalindrome(right))
+                {
+                    String rev2 = reverse(left);
+                    if(map.containsKey(rev2) && map.get(rev2) != i)
+                    {
+                        List<Integer> sub2 = (ArrayList) new ArrayList<Integer>();
+                        sub2.add(i);
+                        sub2.add(map.get(rev2));
+                        list.add(sub2);
+                    }
+                }
+
+            }
+        }
+        List<List<Integer>> result = (ArrayList) new ArrayList<>(list);
+        return result;
+    }
+
+    public String reverse(String s)
+    {
+        StringBuilder sb = new StringBuilder(s);
+        return sb.reverse().toString();
+    }
+
+    public boolean isPalindrome(String s)
+    {
+        int m = 0;
+        int n = s.length() - 1;
+        while(m < n)
+        {
+            if(s.charAt(m) != s.charAt(n))
+                return false;
+            m ++;
+            n --;
+        }
+        return true;
+    }

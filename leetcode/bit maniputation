@@ -1,0 +1,13 @@
+ 1. n & (n - 1) 用于检测n中有多少个1 -> 如果只有一个1， 说明n 是 2 的power, 也可用于汉明码
+ 2. ispowerof4:
+    firstly it must only contains one 1 bit
+    so we should consider n & (n - 1) == 0 first.
+            if((n & (n - 1)) != 0)
+                return false;
+            if((n & 0x55555555) == 0)
+                return false;
+            return true;
+
+3. 0x55555555 is 01010101
+4. any number ^ 全1 ＝ 不改变符号下的取反 -> 100 -> 011
+5. any number & 1 -> 判断最后一位是不是1

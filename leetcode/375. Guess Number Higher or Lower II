@@ -1,0 +1,71 @@
+#1.
+Big idea: minimax, find out the best strategy which will get max cost
+最小化你面临的最大可能损失 minimum the max cost you would have
+for one number: the cost is 0
+for two number: the cost is the smaller number, because we only need to guess the smaller number, if it is not the target number, we can know the other
+                number is.
+for three number: the cost is the middle number, because we can find out the target number by lower or higher.
+for more nubmer:
+f[L][R]表表示猜[L, R]这个区间里面的数字需要多少花费，如果我猜是k, L<=k<=R
+考虑比较坏的情况，我猜错了，那么花费就是 max(f[L][k-1], f[k+1][r]) + k
+为啥呢，因为你猜错了，然后会告诉你是大了还是小了，大了在[L, k-1]这个区间，小了在[k+1, R]这个区间，考虑最坏情况，选大的。
+所以状态转移是
+f[L][R] = min{max(f[L][k-1], f[k+1][r]) + k}, L<=k<=R
+
+
+Definition of dp[i][j]: minimum number of money to guarantee win for subproblem [i, j].
+
+Target: dp[1][n]
+
+Corner case: dp[i][i] = 0 (because the only element must be correct)
+
+Equation: we can choose k (i<=k<=j) as our guess, and pay price k.
+After our guess, the problem is divided into two subproblems.
+Notice we do not need to pay the money for both subproblems.
+We only need to pay the worst case (because the system will tell us which side we should go) to guarantee win.
+So dp[i][j] = min (i<=k<=j) { k + max(dp[i][k-1], dp[k+1][j]) }
+
+public int getMoneyAmount(int n) {
+        int[][] dp = new int[n + 1][n + 1];
+        for(int i = 0; i <= n; i++)
+        {
+            for(int j = 0; j <= n; j++)
+                dp[i][j] = -1;
+        }
+        return helper(dp, 1, n);
+    }
+
+    public int helper(int[][] dp, int i, int j)
+    {
+        if(i >= j)
+        {
+            dp[i][j] = 0;
+            return 0;
+        }
+
+        if(dp[i][j] != -1)
+            return dp[i][j];
+
+        // if(j - i == 1)
+        // {
+        //     dp[i][j] = i;
+        //     return i;
+        // }
+        // if(j - i == 2)
+        // {
+        //     dp[i][j] = i + (j - i) / 2;
+        //     return dp[i][j];
+        // }
+
+        int min = Integer.MAX_VALUE;
+        for(int k = i; k < j; k++)
+        {
+            int left = helper(dp, i, k - 1);
+            int right = helper(dp, k + 1, j);
+            int sum = Math.max(left, right) + k;
+            if(sum < min)
+                min = sum;
+        }
+        dp[i][j] = min;
+        return min;
+    }

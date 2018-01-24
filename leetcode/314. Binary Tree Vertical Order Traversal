@@ -1,0 +1,110 @@
+#1. Solution:
+Use: two queue and one hashmap
+Queue level and Queue column is synchronization add and poll at the same time
+need min and max to mark the begin and start at the end to iterator the map
+The map is used to store the col and the Arraylist in this col
+
+Hint: we can not use DFS because we can not handle the sequence in every sublist
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public List<List<Integer>> verticalOrder(TreeNode root) {
+        List<List<Integer>> result = (ArrayList) new ArrayList<>();
+        if(root == null)
+            return result;
+        Queue<TreeNode> level = new LinkedList<>();
+        Queue<Integer> colQueue = new LinkedList<>();
+
+        HashMap<Integer, ArrayList<Integer>> map = new HashMap<>();
+        level.add(root);
+        colQueue.add(0);
+        int min = 0;
+        int max = 0;
+        while(!level.isEmpty())
+        {
+            TreeNode node = level.poll();
+            int col = colQueue.poll();
+            if(node.left != null)
+            {
+                level.add(node.left);
+                colQueue.add(col - 1);
+                min = Math.min(col - 1, min);
+            }
+            if(node.right != null)
+            {
+                level.add(node.right);
+                colQueue.add(col + 1);
+                max = Math.max(col + 1, max);
+            }
+            if(!map.containsKey(col))
+                map.put(col, new ArrayList<>());
+            map.get(col).add(node.val);
+        }
+        for(int i = min; i <= max; i++)
+        {
+            result.add(map.get(i));
+        }
+        return result;
+    }
+}
+
+#2. do not use the map.
+
+        // No map version:
+        List<List<Integer>> result = (ArrayList) new ArrayList<>();
+        if(root == null)
+            return result;
+        Queue<TreeNode> level = new LinkedList<>();
+        Queue<Integer> colQueue = new LinkedList<>();
+
+        // here is very important!! to handle the special case col = 0 in the beginning
+        List<Integer> zeroCol = new ArrayList<>();
+        result.add(zeroCol);
+
+        level.add(root);
+        colQueue.add(0);
+        int min = 0;
+        int max = 0;
+        while(!level.isEmpty())
+        {
+            TreeNode node = level.poll();
+            int col = colQueue.poll();
+
+            if(col < min)
+            {
+                List<Integer> newlist = (ArrayList) new ArrayList<>();
+                newlist.add(node.val);
+                result.add(0, newlist);
+                min = col;
+            }
+            else if(col > max)
+            {
+                List<Integer> newlist = (ArrayList) new ArrayList<>();
+                newlist.add(node.val);
+                result.add(newlist);
+                max = col;
+            }
+            else
+                result.get(col - min).add(node.val);
+
+            if(node.left != null)
+            {
+                level.add(node.left);
+                colQueue.add(col - 1);
+
+            }
+            if(node.right != null)
+            {
+                level.add(node.right);
+                colQueue.add(col + 1);
+            }
+        }
+        return result;

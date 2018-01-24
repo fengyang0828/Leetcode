@@ -1,0 +1,105 @@
+
+ask the interviewer:
+1. how can we know if we have clean all the cell in the room if we do not know the total size of the room.
+2. can i use some data structure to store the visited coordinate so that i can know if there all the room is cleaned.
+3. since the robot do not know the position of the room, so can i make an assumption that the start position of robot is 0,0
+   and all the current position it moves is related to this 0,0
+4. can i define a new class called Direction
+
+
+interface Robot {
+        Stack<String> actions = new Stack<>(); // store completed actions. from: 1point3acres.com/bbs
+        Stack<String> plans = new Stack<>();    // store future actions. 鐗涗汉浜戦泦,涓€浜╀笁鍒嗗湴
+        int[] curPosition = new int[2]; // mark the position in the robot's view
+        Set<String> visited = new HashSet<>(); // store the visited position
+
+        boolean Move();
+
+        void TurnLeft(int k);
+        void TurnRight(int k);
+
+        void Clean();
+        boolean Move(Direction d);
+
+
+        boolean MoveForward(){
+
+            boolean success = Move();
+            if(success) ++curPosition[1];
+        }
+
+        boolean MoveLeft(){
+
+
+            TurnLeft(1);
+            boolean success = Move();
+            if(success) --curPosition[0];
+            TurnRight(1);
+            return success;
+        }
+
+        boolean MoveRight(){
+
+            TurnRight(1);
+            boolean success = Move();
+            if(success) ++curPosition[0];
+            TurnLeft(1);
+            return success;
+        }
+
+        // explore new space
+        boolean Actuator(String direction){
+            if(direction.equals("Forward")){
+                actions.push(direction);
+                return MoveForward();
+            }
+            if(direction.equals("Left")) {
+                actions.push(direction);
+                return MoveLeft();
+            }
+            if(direction.equals("Right")){
+                actions.push(direction);
+                return MoveRight();
+            }
+            return false;
+        }
+
+        // return to the previous position
+        boolean Return(){
+            String lastAction = stack.pop();
+            if(lastAction.equals("Left")) return MoveRight();
+            if(lastAction.equals("Right")) return MoveLeft();
+            if(lastAction.equals("Forward")) return MoveBackforward();
+        }
+
+
+        // main function
+        boolean Solver(Robot robot){
+
+            String posStr = posStr = curPosition[0] + "," + curPosition[1];
+            visited.add(posStr);
+            Clean();
+            plans.push("Forward");
+            plans.push("Left");
+            plans.push("Right");
+            while(!plans.empty()){
+                String plan = plans.pop();
+                if(!Actuator(plan)) {
+                    actions.pop();
+                    continue;
+                }
+                posStr = curPosition[0] + "," + curPosition[1];
+                if(!visited.contains(posStr)){
+                    Clean();
+                    visited.add(posStr);
+                    plans.push("Forward");
+                    plans.push("Left");
+                    plans.push("Right");
+                }else{
+                    Return();
+                }
+            }
+            return true;
+        }
+
+    }

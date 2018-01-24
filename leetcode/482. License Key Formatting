@@ -1,0 +1,25 @@
+#1. O(n)
+String str = S.replaceAll("-","").toUpperCase();
+        StringBuilder sb = new StringBuilder();
+        for(int i = str.length() - 1; i >= 0; i--)
+        {
+            if(sb.length() % (K + 1) == K)
+                sb.append("-");
+            sb.append(str.charAt(i));
+        }
+        return sb.reverse().toString();
+
+#2. easy understand version, O(n / k  * n) = O(n ^ 2)
+        S = S.replaceAll("[-]", "");
+        S = S.toUpperCase();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(S);
+
+        int i=sb.length()-K;
+        while(i>0) {
+            sb.insert(i, '-');
+            i = i-K;
+        }
+
+        return sb.toString();

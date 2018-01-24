@@ -1,0 +1,98 @@
+Paint house: if we can modify the input, we can make the space complexity decrease to O(1).
+class Solution {
+    public int minCost(int[][] costs) {
+        int n = costs.length;
+        if(costs == null || n == 0) return 0;
+        int[][] dp = new int[n][3];
+        dp[0][0] = costs[0][0];
+        dp[0][1] = costs[0][1];
+        dp[0][2] = costs[0][2];
+        for(int i = 1; i < n; i++)
+        {
+            dp[i][0] = costs[i][0] + Math.min(dp[i-1][1], dp[i-1][2]);
+            dp[i][1] = costs[i][1] + Math.min(dp[i-1][0], dp[i-1][2]);
+            dp[i][2] = costs[i][2] + Math.min(dp[i-1][1], dp[i-1][0]);
+        }
+        return Math.min(Math.min(dp[n-1][0], dp[n-1][1]), dp[n-1][2]);
+    }
+}
+
+nk: n个房子，k种油漆
+running time complexity is O(nk^2)
+space complexity is O(nk)
+    int[][] dp;
+    public int minCostII(int[][] costs) {
+        int n = costs.length;
+        if(costs == null || n == 0) return 0;
+        int k = costs[0].length;
+        dp = new int[n][k];
+        int premin = Integer.MAX_VALUE;
+        for(int j = 0; j < k; j++)
+        {
+            dp[0][j] = costs[0][j];
+        }
+        for(int i = 1; i < n; i++)
+        {
+
+            for(int j = 0; j < k; j++)
+            {
+                dp[i][j] = costs[i][j] + findminK(i - 1, j);
+            }
+        }
+        int min = findminK(n - 1, -1);
+        return min;
+    }
+
+    public int findminK(int row, int j)
+    {
+        int min = Integer.MAX_VALUE;
+        for(int i = 0; i < dp[0].length; i++)
+        {
+            if(i == j) continue;
+            min = Math.min(dp[row][i], min);
+        }
+        return min;
+    }
+
+we should optimize to O(nk) and O(1) space
+If there's no constraint, we choose min cost for each house.
+Since house[i] and house[i - 1] cannot have the same color j, we should choose 2nd min color for house[i - 1].
+If we choose the 3rd min color for house[i - 1], we might miss potential min cost.
+min(i) = min(cost[i][j] + 1st min / 2nd min), 0 < j < n.
+Since current row only relies on last row for getting mins and avoiding same color, O(1) space is enough.
+
+        int n = costs.length;
+        if(costs == null || n == 0) return 0;
+        int k = costs[0].length;
+        int min1 = 0;
+        int min2 = 0;
+        int index = -1;
+
+        for(int i = 0; i < n; i++)
+        {
+            int m1 = Integer.MAX_VALUE;
+            int m2 = Integer.MAX_VALUE;
+            int idx = -1;
+            for(int j = 0; j < k; j++)
+            {
+                int cost = costs[i][j];
+                if(index != j)
+                    cost += min1;
+                else
+                    cost += min2;
+                if(cost < m1)
+                {
+                    m2 = m1;
+                    m1 = cost;
+                    idx = j;
+                }
+                else if(cost < m2)
+                {
+                    m2 = cost;
+                }
+            }
+            min1 = m1;
+            min2 = m2;
+            index = idx;
+        }
+        return min1;

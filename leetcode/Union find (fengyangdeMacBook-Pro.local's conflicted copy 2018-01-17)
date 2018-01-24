@@ -1,0 +1,83 @@
+#1. Quick find:
+
+public class UF
+{
+    private int[] id; // access to component id (site indexed)
+    private int count; // number of components
+
+    public UF(int N)
+    {
+        // Initialize component id array.
+        count = N;
+        id = new int[N];
+        for (int i = 0; i < N; i++)
+            id[i] = i;
+    }
+    public int count()  { return count; }
+    public boolean connected(int p, int q)  { return find(p) == find(q); }
+    public int find(int p)   { return id[p]; }
+    public void union(int p, int q)
+    {
+        // 获得p和q的组号
+        int pID = find(p);
+        int qID = find(q);
+        // 如果两个组号相等，直接返回
+        if (pID == qID) return;
+        // 遍历一次，改变组号使他们属于一个组
+        for (int i = 0; i < id.length; i++)
+            if (id[i] == pID) id[i] = qID;
+        count--;
+    }
+}
+
+Time complexity:
+Find 1
+Union N
+
+#2. Quick - union
+
+private int find(int p)
+{
+    // 寻找p节点所在组的根节点，根节点具有性质id[root] = root
+    while (p != id[p]) p = id[p];
+    return p;
+}
+
+public void union(int p, int q)
+{
+    // Give p and q the same root.
+    int pRoot = find(p);
+    int qRoot = find(q);
+    if (pRoot == qRoot)
+        return;
+    id[pRoot] = qRoot;    // 将一颗树(即一个组)变成另外一课树(即一个组)的子树
+    count--;
+}
+
+Find: tree height
+Union: tree height
+
+#3. Quick - weighted
+
+即总是size小的树作为子树和size大的树进行合并。这样就能够尽量的保持整棵树的平衡。
+所以现在的问题就变成了：树的大小该如何确定？
+我们回到最初的情形，即每个节点最一开始都是属于一个独立的组，通过下面的代码进行初始化：
+
+for (int i = 0; i < N; i++)
+      id[i] = i;    // 每个节点的组号就是该节点的序号
+
+以此类推，在初始情况下，每个组的大小都是1，因为只含有一个节点，所以我们可以使用额外的一个数组来维护每个组的大小，对该数组的初始化也很直观：
+
+public void union(int p, int q)
+{
+    int i = find(p);
+    int j = find(q);
+    if (i == j) return;
+    // 将小树作为大树的子树
+    if (sz[i] < sz[j]) { id[i] = j; sz[j] += sz[i]; }
+    else { id[j] = i; sz[i] += sz[j]; }
+    count--;
+}
+
+Find: lgn
+Union: 
