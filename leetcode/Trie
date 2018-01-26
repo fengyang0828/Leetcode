@@ -1,0 +1,83 @@
+Tire!!!!
+Google intern interview
+
+for every word, when we search the dictionary, we need a isword to figure out whether it is a word, if we simply return the true after the traverse.
+the case will not be covered:
+"abcd" is a word.
+but "abc" is not
+but when we need to search abc, we will return true.
+
+class TrieNode{
+    char val;
+    TrieNode[] childnode;
+    boolean isWord;
+    public TrieNode(char c){
+        this.val = c;
+        this.childnode = new TrieNode[26];
+    }
+}
+public class Trie {
+    private TrieNode root;
+    /** Initialize your data structure here. */
+    public Trie() {
+        char c = '#';
+        root = new TrieNode(c);
+    }
+
+    /** Inserts a word into the trie. */
+    public void insert(String word) {
+        TrieNode cur = root;
+        for(int i = 0; i < word.length(); i++)
+        {
+            char c = word.charAt(i);
+            if(cur.childnode[c - 'a'] == null)
+            {
+                cur.childnode[c - 'a'] = new TrieNode(c);
+            }
+            cur = cur.childnode[c - 'a'];
+        }
+        cur.isWord = true;
+    }
+
+    /** Returns if the word is in the trie. */
+    public boolean search(String word) {
+        TrieNode cur = root;
+        for(int i = 0; i < word.length(); i++)
+        {
+            char c = word.charAt(i);
+            if(cur.childnode[c - 'a'] == null)
+                return false;
+            else
+            {
+                cur = cur.childnode[c - 'a'];
+            }
+        }
+        return cur.isWord;
+    }
+
+    /** Returns if there is any word in the trie that starts with the given prefix. */
+    public boolean startsWith(String prefix) {
+        TrieNode cur = root;
+        for(int i = 0; i < prefix.length(); i++)
+        {
+            char c = prefix.charAt(i);
+            if(cur.childnode[c - 'a'] == null)
+                return false;
+            else
+            {
+                cur = cur.childnode[c - 'a'];
+            }
+        }
+        return true;
+    }
+}
+
+/**
+ * Your Trie object will be instantiated and called as such:
+ * Trie obj = new Trie();
+ * obj.insert(word);
+ * boolean param_2 = obj.search(word);
+ * boolean param_3 = obj.startsWith(prefix);
+ */
+
+ Another way to solve this problem
