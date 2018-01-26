@@ -1,0 +1,72 @@
+based on trie
+and use a recursive way to solve this problem.
+The time complexity is O(n)
+class WordDictionary {
+
+    private class TrieNode{
+        char val;
+        TrieNode[] childnode;
+        boolean isWord;
+
+        public TrieNode(char c){
+            this.val = c;
+            this.childnode = new TrieNode[26];
+        }
+    }
+
+    TrieNode root;
+    /** Initialize your data structure here. */
+    public WordDictionary() {
+        root = new TrieNode('#');
+    }
+
+    /** Adds a word into the data structure. */
+    public void addWord(String word) {
+        TrieNode cur = root;
+        for(int i = 0; i < word.length(); i++)
+        {
+            char c = word.charAt(i);
+            if(cur.childnode[c - 'a'] == null)
+            {
+                cur.childnode[c - 'a'] = new TrieNode(c);
+            }
+            cur = cur.childnode[c - 'a'];
+        }
+        cur.isWord = true;
+    }
+
+    /** Returns if the word is in the data structure. A word could contain the dot character '.' to represent any one letter. */
+    public boolean search(String word) {
+        return match(word.toCharArray(), 0, root);
+    }
+
+    public boolean match(char[] array, int k, TrieNode node)
+    {
+        if(k == array.length) return node.isWord;
+        if(array[k] == '.')
+        {
+            for(int j = 0; j < node.childnode.length; j++)
+            {
+                if(node.childnode[j] != null && match(array, k + 1, node.childnode[j]))
+                    return true;
+            }
+        }
+        else
+        {
+            if(node.childnode[array[k] - 'a'] != null)
+            {
+                if(match(array, k + 1, node.childnode[array[k] - 'a']))
+                    return true;
+            }
+        }
+        return false;
+    }
+}
+
+
+/**
+ * Your WordDictionary object will be instantiated and called as such:
+ * WordDictionary obj = new WordDictionary();
+ * obj.addWord(word);
+ * boolean param_2 = obj.search(word);
+ */

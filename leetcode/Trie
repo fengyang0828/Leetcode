@@ -1,6 +1,6 @@
 Tire!!!!
 Google intern interview
-
+Similar question: 211
 for every word, when we search the dictionary, we need a isword to figure out whether it is a word, if we simply return the true after the traverse.
 the case will not be covered:
 "abcd" is a word.
