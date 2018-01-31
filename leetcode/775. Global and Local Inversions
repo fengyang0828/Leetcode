@@ -1,0 +1,52 @@
+Key insights:
+every local inversion is also a global inversion
+so "local inversions == global inversions" can be interpreted as "there are only local inversions"
+if there are only local inversions, the array will be sorted after making all local inversions
+if there are inversions that are not local, the array won't be sorted after making all local inversions
+
+The original order should be [0, 1, 2, 3, 4...], the number i should be on the position i.
+We just check the offset of each number,
+if the absolute value is larger than 1,
+means the number of global inversion must be bigger than local inversion,
+because a local inversion is a global inversion, but a global one may not be local.
+
+#1. Brute force: TLE
+class Solution {
+    public boolean isIdealPermutation(int[] A) {
+        int global = 0;
+        int local = 0;
+        for(int i = 0; i < A.length; i++)
+        {
+            for(int j = i + 1; j < A.length; j++)
+            {
+                if(global > local)
+                    return false;
+                if(j == i + 1 && A[i] > A[j])
+                    local ++;
+                if(A[i] > A[j])
+                    global ++;
+            }
+        }
+        return local == global? true: false;
+    }
+}
+
+#2. brilliant method
+class Solution {
+    public boolean isIdealPermutation(int[] A) {
+        int global = 0;
+        int local = 0;
+        for(int i = 0; i < A.length; i++)
+        {
+            if(Math.abs(A[i]- i) > 1)
+                global++;
+            else if(Math.abs(A[i] - i) == 1)
+            {
+                global++;
+                local++;
+            }
+
+        }
+        return global == local? true : false;
+    }
+}

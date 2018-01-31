@@ -1,0 +1,46 @@
+#1. Binary search:
+the most important thing for binary search is that we need to consider about the boundary to avoid the dead loop, we know that
+if we keep consider about the mid, if there is only two element in the array, if we keep low = mid, there will be a problem that forever no move.
+mid = low + (high - low) / 2 = low....
+
+1. solution is to use low + 1 < high, to avoid there are two element in the loop
+2. mid equals to low + (high - low) / 2 + 1 to keep the mid biases to right, which makes there is no low = mid to dead loop.
+
+class Solution {
+    public int[] searchRange(int[] nums, int target) {
+        int low = 0;
+        int high = nums.length - 1;
+        int[] result = new int[]{-1, -1};
+        if(nums == null || nums.length == 0)
+            return result;
+        while(low < high)
+        {
+            int mid = low + (high - low) / 2;
+            if(nums[mid] < target){
+                low = mid + 1;
+            }
+            else{
+                high = mid;
+            }
+        }
+        if(nums[low] == target){
+            result[0] = low;
+        }
+        high = nums.length - 1;
+        while(low < high)
+        {
+            int mid = low + (high - low) / 2 + 1;
+            if(nums[mid] > target)
+            {
+                high = mid - 1;
+            }
+            else{
+                low = mid;
+            }
+        }
+        if(nums[high] == target){
+            result[1] = high;
+        }
+        return result;
+    }
+}

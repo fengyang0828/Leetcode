@@ -1,0 +1,51 @@
+The big idea of this question is very easy..
+we should only consider about whether there the x is negative or not.
+However, the big problem is the overflow!!!!
+There is a description in the problem:
+Assume we are dealing with an environment which could only hold integers within the 32-bit signed integer range.
+For the purpose of this problem, assume that your function returns 0 when the reversed integer overflows.
+
+#1. use long to solve the question of overflow
+class Solution {
+    public int reverse(int x) {
+        int result = x;
+        if(x == 0)
+            return 0;
+        else if (x < 0)
+        {
+            result = -x;
+        }
+        long newresult = 0;
+        while(result > 0)
+        {
+            int divide = result % 10;
+            newresult = newresult * 10 + divide;
+            if(newresult >= Integer.MAX_VALUE)
+                return 0;
+            result = result / 10;
+        }
+        if(x < 0)
+            newresult = -newresult;
+        return (int)newresult;
+    }
+}
+
+#2. When overflow happens, newresult = result * 10 + divide, and newresult - divide / 10 will never equal to result again...
+
+A tip here is that
+public int reverse(int x) {
+        if(x == 0)
+            return 0;
+        int result = 0;
+        int newresult = 0;
+        while(x != 0)
+        {
+            int divide = x % 10;
+            newresult = result*10 + divide;
+            if((newresult - divide) / 10 != result)
+                return 0;
+            result = newresult;
+            x = x / 10;
+        }
+        return newresult;
+    }

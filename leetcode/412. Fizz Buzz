@@ -1,0 +1,59 @@
+#1. first solution is that to iterative the loop.
+class Solution {
+    public List<String> fizzBuzz(int n) {
+        List<String> result = (ArrayList) new ArrayList<>();
+        for(int i = 1; i <= n; i++)
+        {
+            if(i % 3 == 0 && i % 5 != 0)
+            {
+                result.add("Fizz");
+            }
+            else if(i % 3 != 0 && i % 5 == 0)
+            {
+                result.add("Buzz");
+            }
+            else if(i % 3 == 0 && i % 5 == 0)
+            {
+                result.add("FizzBuzz");
+            }
+            else
+                result.add(""+i);
+        }
+        return result;
+    }
+}
+
+#2. What if we can not use % as operator?
+class Solution {
+    public List<String> fizzBuzz(int n) {
+        List<String> result = (ArrayList) new ArrayList<>();
+        int Fizz = 0;
+        int Buzz = 0;
+        for(int i = 1; i <= n; i++)
+        {
+            Fizz++;
+            Buzz++;
+            if(Fizz == 3 && Buzz == 5)
+            {
+                result.add("FizzBuzz");
+                Fizz = 0;
+                Buzz = 0;
+            }
+            else if (Fizz == 3)
+            {
+                result.add("Fizz");
+                Fizz = 0;
+            }
+            else if (Buzz == 5)
+            {
+                result.add("Buzz");
+                Buzz = 0;
+            }
+            else{
+                result.add(""+ i);
+            }
+        }
+
+        return result;
+    }
+}
