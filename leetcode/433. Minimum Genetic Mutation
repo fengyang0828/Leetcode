@@ -1,0 +1,169 @@
+#1. Correct BFS, we should traverse the bank and find out if the element is only one character different with start, if it is, means that we can transform it.
+    and also we need another set to record all visited candidate to avoid dead loop.
+
+    A very simple template for BFS
+
+    class Solution {
+        public int minMutation(String start, String end, String[] bank) {
+            int slen = start.length();
+            int elen = end.length();
+            if(slen != elen) return -1;
+            if(bank == null || bank.length == 0) return -1;
+            int mincount = Integer.MAX_VALUE;
+
+            Set<String> visited = new HashSet<>();
+            Queue<String> q = new LinkedList<>();
+            q.offer(start);
+            visited.add(start);
+            int count = 0;
+
+            while(!q.isEmpty())
+            {
+                int size = q.size();
+                for(int i = 0; i < size; i++)
+                {
+                    String temp = q.poll();
+                    if(temp.equals(end))
+                    {
+                        mincount = Math.min(mincount, count);
+                    }
+                    else{
+                        visited.add(temp);
+                        Set<String> candidate = new HashSet<>();
+                        candidate = findDiffOneInBank(temp, bank);
+                        for(String s: candidate){
+                            if(!visited.contains(s))
+                                q.add(s);
+                        }
+
+                    }
+                }
+                count ++;
+            }
+            return mincount == Integer.MAX_VALUE? -1 : mincount;
+        }
+
+        public Set<String> findDiffOneInBank(String s, String[] bank){
+            Set<String> candidate = new HashSet<>();
+            for(int i = 0; i < bank.length; i++){
+                int count = 0;
+                for(int j = 0; j < bank[i].length(); j++)
+                {
+                    if(count > 1) break;
+                    if(s.charAt(j) != bank[i].charAt(j))
+                        count++;
+                }
+                if(count == 1)
+                    candidate.add(bank[i]);
+
+            }
+            return candidate;
+        }
+    }
+
+
+#2. Try for correct DFS:
+!!!记得这里要回溯！！！！！！！！！因为可能之前访问过的不是最小值！！！！， 如果不回溯，记得使用map，不用set， 用map记录访问到这里的所用路径
+class Solution {
+    int mincount = Integer.MAX_VALUE;
+    public int minMutation(String start, String end, String[] bank) {
+        int slen = start.length();
+        int elen = end.length();
+        if(slen != elen) return -1;
+        if(bank == null || bank.length == 0) return -1;
+        Set<String> visited = new HashSet<>();
+        visited.add(start);
+        helper(start, end, bank, 0, visited);
+        return mincount == Integer.MAX_VALUE? -1 : mincount;
+
+    }
+
+    public void helper(String start, String end, String[] bank, int count, Set<String> visited){
+        if(start.equals(end))
+        {
+            mincount = Math.min(mincount, count);
+            return;
+        }
+
+        for(int i = 0; i < bank.length; i++){
+            if(visited.contains(bank[i])) continue;
+            if(DiffInOneCharacter(start, bank[i]))
+            {
+                visited.add(bank[i]);
+                helper(bank[i], end, bank, count + 1, visited);
+                visited.remove(bank[i]);
+            }
+        }
+        return;
+
+    }
+
+    public boolean DiffInOneCharacter(String start, String bankElement){
+        if(start.length() != bankElement.length()) return false;
+        int count = 0;
+        for(int i = 0; i < start.length(); i++){
+            if(count > 1) return false;
+            if(start.charAt(i) != bankElement.charAt(i))
+                count++;
+        }
+        if(count == 1)
+            return true;
+        else
+            return false;
+    }
+}
+
+Wrong answer:
+#3. my idea is totally wrong, because i use Start as the source and End as the target, to check if there is a difference between start and end,
+    then i change the start' this element to make it same as end, and then DFS, to find out the next change will equal to end.. at the condition that every
+    transfer is in the bank, but this will not pass the case:
+    "AACCGGTT"
+    "AAACGGTA"
+    ["AACCGATT","AACCGATA","AAACGATA","AAACGGTA"]
+
+    Since we can transfer to the element in the bank which is not same as only transform...
+
+class Solution {
+    int mincount = Integer.MAX_VALUE;
+    public int minMutation(String start, String end, String[] bank) {
+        int slen = start.length();
+        int elen = end.length();
+        if(slen != elen) return -1;
+        if(bank == null || bank.length == 0) return -1;
+        helper(start, end, bank, 0);
+        return mincount == Integer.MAX_VALUE? -1 : mincount;
+    }
+
+    public void helper(String start, String end, String[] bank, int count)
+    {
+        if(start.equals(end))
+        {
+            mincount = Math.min(count, mincount);
+            return;
+        }
+        int slen = start.length();
+        int elen = end.length();
+        int i = 0;
+        while(i < slen){
+            if(start.charAt(i) != end.charAt(i))
+            {
+                //DFS
+                String newstring = start.substring(0, i) + end.charAt(i) + start.substring(i + 1, slen);
+                if(findinbank(newstring, bank))
+                {
+                    helper(newstring, end, bank, count + 1);
+                }
+            }
+            i++;
+        }
+        return;
+    }
+
+    public boolean findinbank(String s, String[] bank){
+        for(int i = 0; i < bank.length; i++){
+            if(bank[i].equals(s))
+                return true;
+        }
+        return false;
+    }
+}

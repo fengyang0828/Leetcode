@@ -1,0 +1,220 @@
+#1. Based on BFS and DFS, but will TLE, i should find way to optimize
+class Solution {
+    int minCount = Integer.MAX_VALUE;
+    Map<String, Set<String>> neighbours;
+    List<String> curlist;
+    List<List<String>> result;
+    public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
+        result = (ArrayList) new ArrayList<>();
+        if(beginWord.length() != endWord.length())
+            return result;
+
+        Queue<String> q = new LinkedList<>();
+        neighbours = new HashMap<>();
+        q.offer(beginWord);
+
+        int count = 0;
+        while(!q.isEmpty()){
+            int size = q.size();
+            for(int i = 0; i < size; i++){
+                String temp = q.poll();
+                if(temp.equals(endWord)){
+                    minCount = Math.min(count, minCount);
+                }
+                else if(neighbours.containsKey(temp)){
+                    continue;
+                }
+                else{
+                    Set<String> candidate = findDiffInOneCharacter(temp, wordList);
+                    neighbours.put(temp, candidate);
+                    for(String s: candidate)
+                        q.offer(s);
+                }
+            }
+            count++;
+        }
+
+       //DFS
+        curlist = (ArrayList) new ArrayList<>();
+        curlist.add(beginWord);
+        Set<String> visited = new HashSet<>();
+        DFS(beginWord, endWord, 0, visited);
+        return result;
+    }
+
+    public void DFS(String source, String target, int count, Set<String> visited){
+        if(neighbours.get(source).contains(target)){
+            if(count == minCount - 1)
+            {
+                List<String> clonelist = new ArrayList<>(curlist);
+                clonelist.add(target);
+                result.add(clonelist);
+            }
+            return;
+        }
+
+        if(count >= minCount - 1) return;
+        for(String s: neighbours.get(source)){
+            if(visited.contains(s)) continue;
+            curlist.add(s);
+            visited.add(s);
+            DFS(s, target, count + 1, visited);
+            visited.remove(s);
+            curlist.remove(curlist.size() - 1);
+        }
+
+    }
+
+    public Set<String> findDiffInOneCharacter(String beginWord, List<String> wordList){
+        Set<String> candidate = new HashSet<>();
+        for(String s: wordList){
+            int count = 0;
+            for(int i = 0; i < s.length(); i++){
+                if(count > 1) break;
+                if(s.charAt(i) != beginWord.charAt(i))
+                    count++;
+            }
+            if(count == 1)
+                candidate.add(s);
+        }
+        return candidate;
+    }
+}
+
+#2.
+1. we can add a isfound boolean type to mark the BFS, when isfound is true and all the iterative is done, we can break and no need to traverse next element in q.
+2. When BFS, according to BFS, we can find out the distance map very easily, Add another map called distance to optimize the DFS of the algorithm..
+    in DFS we do not need a set called visited and traverse all the permutation of the wordlist, if distance.get(child) != distance.get(parent) + 1
+    we know that it is not the shortest path and thus we can optimize our algorithm quickly.
+    because visited.remove will cause a O(n) time and it will traverse all the permutation of the neighbours.
+3. findneighbour 时也可以进行优化！
+public ArrayList<String> getNeighbors(String node, Set<String> dict) {
+  ArrayList<String> res = new ArrayList<String>();
+  char chs[] = node.toCharArray();
+
+  for (char ch ='a'; ch <= 'z'; ch++) {
+      for (int i = 0; i < chs.length; i++) {
+          if (chs[i] == ch) continue;
+          char old_ch = chs[i];
+          chs[i] = ch;
+          if (dict.contains(String.valueOf(chs))) {
+              res.add(String.valueOf(chs));
+          }
+          chs[i] = old_ch;
+      }
+
+  }
+  return res;
+}
+
+4. DFS 可以优化成以下这种写法， 因为neighbour和distance中存的都是最短路径才有的node，因此不需要一个count来标记最短路径，只要找到就是最短路径
+public void DFS(String source, String target, int count, Set<String> visited){
+        if(source.equals(target)){
+            List<String> clonelist = new ArrayList<>(curlist);
+            result.add(clonelist);
+            return;
+        }
+
+        for(String s: neighbours.get(source)){
+            if(distance.get(s) != distance.get(source) + 1) continue;
+            curlist.add(s);
+            DFS(s, target, count + 1, visited);
+            curlist.remove(curlist.size() - 1);
+        }
+
+    }
+也可以将curlist提出到外面写
+
+5. 如果用visited 的话， 得到的不一定是最短路径，因此一定要remove 使用回溯法。 并用count控制，如果不这样，得到的是全排列。
+
+AC 算法
+class Solution {
+    int minCount = Integer.MAX_VALUE;
+    Map<String, Set<String>> neighbours;
+    List<String> curlist;
+    List<List<String>> result;
+    Map<String, Integer> distance;
+    public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
+        result = (ArrayList) new ArrayList<>();
+        if(beginWord.length() != endWord.length())
+            return result;
+
+        Queue<String> q = new LinkedList<>();
+        neighbours = new HashMap<>();
+        distance = new HashMap<>();
+        q.offer(beginWord);
+
+        distance.put(beginWord, 0);
+
+        int count = 0;
+        while(!q.isEmpty()){
+            int size = q.size();
+            for(int i = 0; i < size; i++){
+                String temp = q.poll();
+                if(temp.equals(endWord)){
+                    minCount = Math.min(count, minCount);
+                }
+                else if(neighbours.containsKey(temp)){
+                    continue;
+                }
+                else{
+                    Set<String> candidate = findDiffInOneCharacter(temp, wordList);
+                    neighbours.put(temp, candidate);
+                    for(String s: candidate){
+                        if(distance.containsKey(s)) continue;
+                        distance.put(s, distance.get(temp) + 1);
+                        q.offer(s);
+                    }
+
+                }
+            }
+            count++;
+        }
+
+       //DFS
+        curlist = (ArrayList) new ArrayList<>();
+        curlist.add(beginWord);
+        Set<String> visited = new HashSet<>();
+        DFS(beginWord, endWord, 0, visited);
+        return result;
+    }
+
+    public void DFS(String source, String target, int count, Set<String> visited){
+        if(source.equals(target)){
+            if(count == minCount - 1)
+            {
+                List<String> clonelist = new ArrayList<>(curlist);
+                clonelist.add(target);
+                result.add(clonelist);
+            }
+            return;
+        }
+
+        if(count >= minCount - 1) return;
+        for(String s: neighbours.get(source)){
+            //if(visited.contains(s)) continue;
+            if(distance.get(s) != distance.get(source) + 1) continue;
+            curlist.add(s);
+            //visited.add(s);
+            DFS(s, target, count + 1, visited);
+            //visited.remove(s);
+            curlist.remove(curlist.size() - 1);
+        }
+
+    }
+
+    public Set<String> findDiffInOneCharacter(String beginWord, List<String> wordList){
+        Set<String> candidate = new HashSet<>();
+        for(String s: wordList){
+            int count = 0;
+            for(int i = 0; i < s.length(); i++){
+                if(count > 1) break;
+                if(s.charAt(i) != beginWord.charAt(i))
+                    count++;
+            }
+            if(count == 1)
+                candidate.add(s);
+        }
+        return candidate;
+    }
+}

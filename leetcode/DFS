@@ -1,4 +1,11 @@
 // two ways to DFS, use set or not !!!!
+DFS适合此类题目：给定初始状态跟目标状态，要求判断从初始状态到目标状态是否有解。
+BFS适合此类题目：给定初始状态跟目标状态，要求从初始状态到目标状态的最短路径。
+
+总结，在找最短路径的时候，如果用了DFS, 记得使用回溯，即每次的状态是不可保存的，因为即使遍历过，也可能不是最短的。。。
+如果不回溯，记得使用map，不用set， 用map记录访问到这里的所用路径！！！！！
+
+
     public boolean hascycle(int source, int target, int pre)
     {
         if(!map.containsKey(source)) return false;
