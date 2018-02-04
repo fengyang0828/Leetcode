@@ -1,0 +1,214 @@
+#1. 无下限疯狂走远。。。。。
+    emmm。。。。
+    BFS, 最重要的是！！！以前没有注意到的！！对图进行BFS时，要有一个visited 来记录是否已经被遍历过，否则成环进入死循环
+         然后更为重要的是，对图进行clone的时候，需要新建一个map来代表一对一的clone，原来的节点和新的节点
+         这样，当节点已经被遍历过的时候，我们需要维护邻居关系，这个时候，邻居关系加入的不是一个新的节点，而是从前已经遍历过的节点，所以用map更为方便
+
+/**
+ * Definition for undirected graph.
+ * class UndirectedGraphNode {
+ *     int label;
+ *     List<UndirectedGraphNode> neighbors;
+ *     UndirectedGraphNode(int x) { label = x; neighbors = new ArrayList<UndirectedGraphNode>(); }
+ * };
+ */
+public class Solution {
+    public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
+        if(node == null) return null;
+
+        UndirectedGraphNode root = new UndirectedGraphNode(node.label);
+
+        Queue<UndirectedGraphNode> q = new LinkedList<>();
+        q.offer(node);
+
+        HashMap<UndirectedGraphNode, UndirectedGraphNode> visited = new HashMap<>();
+        visited.put(node, root);
+
+        while(!q.isEmpty()){
+            UndirectedGraphNode cur = q.poll();
+            for(UndirectedGraphNode neighbor: cur.neighbors){
+                if(!visited.containsKey(neighbor))
+                {
+                    q.offer(neighbor);
+                    UndirectedGraphNode newnode = new UndirectedGraphNode(neighbor.label);
+                    visited.put(neighbor, newnode);
+                    visited.get(cur).neighbors.add(newnode);
+
+                }
+                else
+                {
+                    visited.get(cur).neighbors.add(visited.get(neighbor));
+                }
+            }
+        }
+
+        return root;
+
+    }
+
+}
+
+＃2 改用set进行尝试, 秘制错误。。。。大概是这样吧，所以用map更为方便
+public class Solution {
+    public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
+        if(node == null) return null;
+
+        UndirectedGraphNode root = new UndirectedGraphNode(node.label);
+
+        Queue<UndirectedGraphNode> q = new LinkedList<>();
+        q.offer(node);
+
+        //HashMap<UndirectedGraphNode, UndirectedGraphNode> visited = new HashMap<>();
+        HashSet<UndirectedGraphNode> visited = new HashSet<>();
+        visited.add(node);
+
+        while(!q.isEmpty()){
+            UndirectedGraphNode cur = q.poll();
+            for(UndirectedGraphNode neighbor: cur.neighbors){
+                if(!visited.contains(neighbor))
+                {
+                    q.offer(neighbor);
+                    UndirectedGraphNode newnode = new UndirectedGraphNode(neighbor.label);
+                    visited.add(neighbor);
+                    findNode(visited, cur).neighbors.add(newnode);
+
+                }
+                else
+                {
+                    findNode(visited, cur).neighbors.add(findNode(visited, neighbor));
+                    //visited.get(cur).neighbors.add(visited.get(neighbor));
+                }
+            }
+        }
+
+        return root;
+
+    }
+
+    public UndirectedGraphNode findNode(HashSet<UndirectedGraphNode> visited, UndirectedGraphNode node){
+        for(UndirectedGraphNode n: visited){
+            if(n.equals(node))
+             return n;
+        }
+        return null;
+    }
+
+}
+
+#DFS
+public class Solution {
+    HashMap<UndirectedGraphNode, UndirectedGraphNode> map = new HashMap<>();
+    public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
+        if(node == null) return null;
+        if(map.containsKey(node))
+        {
+            return map.get(node);
+        }
+        UndirectedGraphNode newnode = new UndirectedGraphNode(node.label);
+        map.put(node, newnode);
+        for(UndirectedGraphNode n: node.neighbors){
+                newnode.neighbors.add(cloneGraph(n));
+        }
+        return newnode;
+    }
+}
+
+
+
+
+
+垃圾思考过程：
+
+#1. Simple BFS, but wrong answer because this way I do not consider about the same label in the neighbor, when I use getNode, there will be a trouble
+
+/**
+ * Definition for undirected graph.
+ * class UndirectedGraphNode {
+ *     int label;
+ *     List<UndirectedGraphNode> neighbors;
+ *     UndirectedGraphNode(int x) { label = x; neighbors = new ArrayList<UndirectedGraphNode>(); }
+ * };
+ */
+public class Solution {
+    public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
+        if(node == null) return null;
+
+        UndirectedGraphNode root = new UndirectedGraphNode(node.label);
+        UndirectedGraphNode newcur = root;
+
+        Queue<UndirectedGraphNode> q = new LinkedList<>();
+        q.offer(node);
+
+        while(!q.isEmpty()){
+            int size = q.size();
+            for(int i = 0; i < size; i++){
+                UndirectedGraphNode cur = q.poll();
+                newcur = getNode(newcur, cur);
+                if(newcur == null) break;
+                for(UndirectedGraphNode neighbor: cur.neighbors){
+                    q.offer(neighbor);
+                    newcur.neighbors.add(new UndirectedGraphNode(neighbor.label));
+                }
+            }
+        }
+
+        return root;
+
+    }
+
+    public UndirectedGraphNode getNode(UndirectedGraphNode node, UndirectedGraphNode target){
+        for(UndirectedGraphNode neighbor: node.neighbors){
+            if(target.label == neighbor.label){
+                return neighbor;
+            }
+        }
+        return null;
+    }
+}
+
+#2. There need a structure to mark the sequence of the node in the neighbor
+    We can use a map or use count to get.
+
+    can not pass test case, will cause TLE, why???
+
+    /**
+     * Definition for undirected graph.
+     * class UndirectedGraphNode {
+     *     int label;
+     *     List<UndirectedGraphNode> neighbors;
+     *     UndirectedGraphNode(int x) { label = x; neighbors = new ArrayList<UndirectedGraphNode>(); }
+     * };
+     */
+    public class Solution {
+        public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
+            if(node == null) return null;
+
+            UndirectedGraphNode root = new UndirectedGraphNode(node.label);
+            UndirectedGraphNode newcur = root;
+
+            Queue<UndirectedGraphNode> q = new LinkedList<>();
+            Queue<UndirectedGraphNode> cloneq = new LinkedList<>();
+            q.offer(node);
+            cloneq.offer(newcur);
+
+            UndirectedGraphNode child;
+
+            while(!q.isEmpty()){
+                int size = q.size();
+                for(int i = 0; i < size; i++){
+                    UndirectedGraphNode cur = q.poll();
+                    newcur = cloneq.poll();
+                    for(UndirectedGraphNode neighbor: cur.neighbors){
+                        q.offer(neighbor);
+                        child = new UndirectedGraphNode(neighbor.label);
+                        newcur.neighbors.add(child);
+                        cloneq.offer(newcur.neighbors.get(newcur.neighbors.size() - 1));
+                    }
+                }
+            }
+
+            return root;
+
+        }
+
+    }

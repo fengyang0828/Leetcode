@@ -1,0 +1,108 @@
+#1. very easy 2-D DP, which will cause MLE... because K is very large
+class Solution {
+    public int kthGrammar(int N, int K) {
+        if(N <= 1) return 0;
+        int[][] dp = new int[N][(int)Math.pow(2,N)];
+        dp[0][0] = 0;
+        for(int i = 1; i < N; i++)
+        {
+            for(int j = 0; j < Math.pow(2, i - 1); j++)
+            {
+                if(dp[i-1][j] == 0)
+                {
+                    dp[i][2*j] = 0;
+                    dp[i][2*j + 1] = 1;
+                }
+                else
+                {
+                    dp[i][2*j] = 1;
+                    dp[i][2*j + 1] = 0;
+                }
+            }
+        }
+        return dp[N-1][K-1];
+
+    }
+}
+
+#2. optimize to 1-D DP
+    这里需要横向roll array一下， 但是还是MLE, 不禁怀疑有数学算法。。。
+
+class Solution {
+    public int kthGrammar(int N, int K) {
+        if(N <= 1) return 0;
+        int[] dp = new int[(int)Math.pow(2,N)];
+        dp[0] = 0;
+        for(int i = 1; i < N; i++)
+        {
+            int prelength = (int)Math.pow(2,i - 1);
+            int end = prelength - 1;
+            for(int j = 0; j < prelength; j++)
+            {
+                end = end + 2;
+                int start = 2*(j+1);
+                for(int k = end; k >= start; k--)
+                {
+                    dp[k] = dp[k - 2];
+                }
+                if(dp[j] == 0)
+                {
+                    dp[2*j] = 0;
+                    dp[2*j + 1] = 1;
+                }
+                else
+                {
+                    dp[2*j] = 1;
+                    dp[2*j + 1] = 0;
+                }
+            }
+        }
+        return dp[K-1];
+
+    }
+}
+
+#3. Use StringBuilder to solve this problem.. TLE....
+class Solution {
+        public int kthGrammar(int N, int K) {
+            if(N <= 1) return 0;
+            StringBuilder sb = new StringBuilder();
+            sb.append("0");
+            for(int i = 1; i < N; i++)
+            {
+                int prelength = (int)Math.pow(2,i - 1);
+                for(int j = 0; j < prelength; j++)
+                {
+                    if(sb.toString().charAt(2*j) == '0')
+                    {
+                        sb.insert(2*j + 1, "1");
+                    }
+                    else
+                    {
+                        sb.insert(2*j + 1, "0");
+                    }
+                }
+            }
+            return sb.toString().charAt(K - 1) - '0';
+
+        }
+    }
+
+#4. 不需要！存所有的！！！你个大傻逼！！,用递归
+    class Solution {
+        public int kthGrammar(int N, int K) {
+            if(N <= 1) return 0;
+            if(K % 2 == 0){
+                int pre = kthGrammar(N-1, K/2);
+                if(pre == 1) return 0;
+                else return 1;
+            }
+            else
+            {
+                int pre = kthGrammar(N-1, (K+1)/2);
+                if(pre == 1) return 1;
+                else return 0;
+            }
+
+        }
+    }
