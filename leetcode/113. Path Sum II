@@ -1,0 +1,58 @@
+#1. Use a global variable
+
+I think it is a backtrack and DFS problem.
+class Solution {
+    List<List<Integer>> result;
+    List<Integer> curlist;
+    public List<List<Integer>> pathSum(TreeNode root, int sum) {
+        result = (ArrayList) new ArrayList<>();
+        curlist = (ArrayList) new ArrayList<>();
+        if(root == null) return result;
+        findPath(root, sum);
+        return result;
+    }
+
+    public void findPath(TreeNode root, int sum){
+        if(root == null) return;
+        curlist.add(root.val);
+        if(root.left == null && root.right == null){
+            if(root.val == sum)
+            {
+                result.add(new ArrayList<>(curlist));
+            }
+            curlist.remove(curlist.size() - 1);
+            return;
+        }
+        findPath(root.left, sum - root.val);
+        findPath(root.right, sum - root.val);
+        curlist.remove(curlist.size() - 1);
+    }
+}
+
+#2. Not use global variable would be better and easy to understand!!!
+class Solution {
+    List<List<Integer>> result;
+    //List<Integer> curlist;
+    public List<List<Integer>> pathSum(TreeNode root, int sum) {
+        result = (ArrayList) new ArrayList<>();
+        List<Integer> curlist = (ArrayList) new ArrayList<>();
+        if(root == null) return result;
+        findPath(curlist, root, sum);
+        return result;
+    }
+
+    public void findPath(List<Integer> curlist, TreeNode root, int sum){
+        if(root == null) return;
+        List<Integer> newList = new ArrayList<>(curlist);
+        newList.add(root.val);
+        if(root.left == null && root.right == null){
+            if(root.val == sum)
+            {
+                result.add(new ArrayList<>(newList));
+                return;
+            }
+        }
+        findPath(newList, root.left, sum - root.val);
+        findPath(newList, root.right, sum - root.val);
+    }
+}

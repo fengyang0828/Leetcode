@@ -1,0 +1,48 @@
+＃1. DFS：
+当input是 －100000000，会报stackoverflow的错误，这时，dfs已经无法解决这个问题
+class Solution {
+    public int reachNumber(int target) {
+        return helper(target, 0, 1);
+    }
+
+    public int helper(int target, int i, int step){
+        if(Math.abs(i) > Math.abs(target)) return Integer.MAX_VALUE;
+        if(i == target) return step - 1;
+        int left = helper(target, i - step, step + 1);
+        int right = helper(target, i + step, step + 1);
+        return Math.min(left, right);
+    }
+
+}
+
+#2. A math problem:
+Step 0: Get positive target value (step to get negative target is the same as to get positive value due to symmetry).
+Step 1: We can simply use greedy algorithm to jump until the sum > target, and after that, we have a difference between target and sum.
+Step 2: We know that if we change the num from right to left, the total sum will decrease 2*num.
+        e.g: 1+2+3+4 = 10, target = 8, if we move 3 from right to left, then we get 1+2-3+4 = 4, which decrease 6.
+Step 3: if we get a even difference, we know that we can always find a num to move to make the sum = target.
+Step 4: if we get a old difference, we need to add one step to make the difference to be even.
+
+public int reachNumber(int target) {
+        target = Math.abs(target);
+        int sum = 0;
+        int step = 0;
+        //int i = 0;
+        while(sum < target){
+            //i++;
+            step++;
+            sum +=step;
+        }
+        if((sum - target) % 2 == 0){
+            return step;
+        }
+        else{
+            while((sum - target) % 2 != 0){
+                step++;
+                sum += step;
+            }
+        }
+        return step;
+
+    }
+

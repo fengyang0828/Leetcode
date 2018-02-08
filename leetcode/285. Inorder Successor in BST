@@ -1,0 +1,85 @@
+#1. My way to solve this problem, the time complexity is O(n) in the worst case.
+    Use the two different situation in the textbook
+class Solution {
+
+    TreeNode pre;
+    TreeNode successor;
+    public TreeNode inorderSuccessor(TreeNode root, TreeNode p) {
+        if(root == null) return null;
+        pre = null;
+        if(p.right != null)
+            return findMin(p.right);
+        else{
+            inorder(root, p);
+            return successor;
+        }
+    }
+
+    public TreeNode findMin(TreeNode p){
+        while(p.left != null)
+        {
+            p = p.left;
+        }
+        return p;
+    }
+
+    public void inorder(TreeNode root, TreeNode p){
+        if(root == null) return;
+        inorder(root.left, p);
+        if(pre != null && pre.val == p.val)
+        {
+            if(successor != null) return;
+            successor = root;
+            return;
+        }
+        else{
+            pre = root;
+            System.out.println(pre.val);
+            inorder(root.right, p);
+        }
+    }
+}
+
+#2. The ordinary solution for this question:
+The iterative one: it takes O(h) time and O(1) space
+class Solution {
+    public TreeNode inorderSuccessor(TreeNode root, TreeNode p) {
+        if(root == null) return null;
+        TreeNode cur = root;
+        TreeNode successor = null;
+        while(cur != null){
+            if(cur.val > p.val){
+                successor = cur;
+                cur = cur.left;
+            }
+            else
+                cur = cur.right;
+        }
+
+        return successor;
+
+    }
+}
+
+The recursive one:
+
+class Solution {
+    TreeNode succ;
+    public TreeNode inorderSuccessor(TreeNode root, TreeNode p) {
+        if(root == null) return null;
+        succ = null;
+        findNext(root, p);
+        return succ;
+    }
+
+    public void findNext(TreeNode root, TreeNode p){
+        if(root == null) return;
+        if(p.val >= root.val){
+           findNext(root.right, p);
+        }
+        else{
+            succ = root;
+            findNext(root.left, p);
+        }
+    }
+}
