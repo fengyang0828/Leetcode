@@ -1,0 +1,80 @@
+#1. My way to solve this problem, use the way as the last question but the different is that I always fix a pre Node to represent the node that wait
+    to be add next.
+    Since the next node of the cur's child may be null, so we can find the first Non-null child node, and this the next node of pre
+    There is a trick for the level loop, in the last question, we can simply made level = level.left to the first node of next level,
+    but in this question:
+    the first node of the next level may be null, so we need to find the first node that has one or more child.
+
+public class Solution {
+    public void connect(TreeLinkNode root) {
+        if(root == null) return;
+        TreeLinkNode level = root;
+        while(level != null){
+            TreeLinkNode cur = level;
+            TreeLinkNode pre = null;
+            while(cur != null){
+                TreeLinkNode left = cur.left;
+                TreeLinkNode right = cur.right;
+                if(left != null) {
+                    if(pre != null)
+                        pre.next = left;
+                    pre = left;
+                }
+                if(right != null){
+                    if(pre != null)
+                        pre.next = right;
+                    pre = right;
+                }
+                cur = cur.next;
+            }
+            while(level.next != null && level.left == null && level.right == null){
+                level = level.next;
+            }
+            if(level.left != null){
+                level = level.left;
+            }
+            else
+                level = level.right;
+        }
+    }
+}
+
+
+#2. A more simply way is make the loop just once:
+    but the time complexity is O(n) also.
+    The idea is to mark the first node of the level.
+    And every time we can simply make the cur assign with the first node of the level and then repeat the work.
+ public void connect(TreeLinkNode root) {
+        TreeLinkNode firstNode = null;
+        TreeLinkNode pre = null;
+        TreeLinkNode cur = root;
+        while(cur != null){
+            TreeLinkNode left = cur.left;
+            TreeLinkNode right = cur.right;
+            if(left != null){
+                if(firstNode == null) firstNode = left;
+                if(pre != null){
+                    pre.next = left;
+                }
+                pre = left;
+            }
+            if(right != null){
+                if(firstNode == null) firstNode = right;
+                if(pre != null){
+                    pre.next = right;
+                }
+                pre = right;
+            }
+            if(cur.next != null){
+                cur = cur.next;
+            }
+            else{
+                cur = firstNode;
+                firstNode = null;
+                pre = null;
+            }
+        }
+    }
+#3. Recursive way:
+    use the map and the height to make a Map<height, node> to mark all the level.
+    use dfs and if depth is the same, simply add it to the map

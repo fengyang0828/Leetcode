@@ -1,0 +1,89 @@
+#1. Use min_heap to easy solve this problem
+    The time complexity is O(m*n*log(m*n))
+class Solution {
+    public List<int[]> kSmallestPairs(int[] nums1, int[] nums2, int k) {
+        List<int[]> result = (ArrayList) new ArrayList<>();
+        if(nums1 == null || nums2 == null || k == 0 || nums1.length == 0 || nums2.length == 0)
+            return result;
+        int m = nums1.length;
+        int n = nums2.length;
+        PriorityQueue<Interval> pq = new PriorityQueue<Interval>(m*n, new Comparator<Interval>(){
+            public int compare(Interval a, Interval b){
+                return a.x + a.y - b.x - b.y;
+            }
+        });
+
+        for(int i = 0; i < m; i++){
+            for(int j = 0; j < n; j++){
+                pq.offer(new Interval(nums1[i], nums2[j]));
+            }
+        }
+
+        while(!pq.isEmpty() && k > 0){
+            Interval temp = pq.poll();
+            int[] subResult = new int[2];
+            subResult[0] = temp.x;
+            subResult[1] = temp.y;
+            result.add(subResult);
+            k--;
+        }
+        return result;
+    }
+
+    private class Interval{
+        int x;
+        int y;
+        public Interval(int x, int y){
+            this.x = x;
+            this.y = y;
+        }
+    }
+}
+
+#2. How to optimize the algorithm to KlogK
+    like 378!!!!We know the most smallest nums1[0], nums2[0], and next is between nums[1], nums[0] or nums[0], nums[1], so we first maintain a pq
+    to first maintain k from nums1[0] to nums2[0],
+    if we pop the smallest one, and use nums[i], nums[k] to replace the old one and compare it to others.
+
+class Solution {
+    public List<int[]> kSmallestPairs(int[] nums1, int[] nums2, int k) {
+        List<int[]> result = (ArrayList) new ArrayList<>();
+        if(nums1 == null || nums2 == null || k == 0 || nums1.length == 0 || nums2.length == 0)
+            return result;
+        int m = nums1.length;
+        int n = nums2.length;
+        PriorityQueue<Interval> pq = new PriorityQueue<Interval>(new Comparator<Interval>(){
+            public int compare(Interval a, Interval b){
+                return a.x + a.y - b.x - b.y;
+            }
+        });
+        int bound = m > k ? k : m;
+        for(int i = 0; i < bound; i++){
+            pq.offer(new Interval(nums1[i], nums2[0], 0));
+        }
+
+        System.out.println(pq.size());
+        while(!pq.isEmpty() && k-- > 0){
+            Interval temp = pq.poll();
+            int[] subResult = new int[2];
+            subResult[0] = temp.x;
+            subResult[1] = temp.y;
+            result.add(subResult);
+            if(temp.y_position == n - 1) continue;
+            pq.offer(new Interval(temp.x, nums2[temp.y_position + 1], temp.y_position + 1));
+
+        }
+        return result;
+    }
+
+    private class Interval{
+        int x;
+        int y;
+        int y_position;
+        public Interval(int x, int y, int y_position){
+            this.x = x;
+            this.y = y;
+            this.y_position = y_position;
+        }
+    }
+}

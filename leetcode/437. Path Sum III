@@ -1,0 +1,48 @@
+#1. For every node, we need to execute the helper function to calculate the count.
+    We need to specify that for every node we need to do the same thing, so we need to traverse the tree first.
+class Solution {
+    int count = 0;
+    public int pathSum(TreeNode root, int sum) {
+        preorder(root, sum);
+        return count;
+    }
+
+    public void preorder(TreeNode root, int sum){
+        if(root == null){
+            return;
+        }
+        helper(root, sum);
+        preorder(root.left, sum);
+        preorder(root.right, sum);
+    }
+
+    public void helper(TreeNode root, int sum){
+        if(root == null) return;
+        if(sum == root.val) {
+            count++;
+        }
+        helper(root.left, sum - root.val);
+        helper(root.right, sum - root.val);
+    }
+}
+
+#2. Can delete the preorder function, and merge it into the pathSum
+class Solution {
+    public int pathSum(TreeNode root, int sum) {
+        if(root == null) return 0;
+        int count = helper(root, sum);
+        return count + pathSum(root.left, sum) + pathSum(root.right, sum);
+    }
+
+    public int helper(TreeNode root, int sum){
+        if(root == null) return 0;
+        int left = helper(root.left, sum - root.val);
+        int right = helper(root.right, sum - root.val);
+        int count = left + right;
+        if(sum == root.val) {
+            count ++;
+        }
+        return count;
+
+    }
+}

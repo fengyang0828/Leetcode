@@ -1,0 +1,56 @@
+#1. use helper to simple connect two node
+    O(n) time complexity:
+    public void connect(TreeLinkNode root) {
+        if(root == null)
+            return;
+        connect_helper(root.left,root.right);
+    }
+
+    public void connect_helper(TreeLinkNode p, TreeLinkNode q)
+    {
+        if(p == null || q == null)
+            return;
+        p.next = q;
+        connect_helper(p.left,p.right);
+        connect_helper(p.right,q.left);
+        connect_helper(q.left,q.right);
+    }
+
+#2. point is that we need to use the next after we connect.
+    public void connect(TreeLinkNode root) {
+        if(root == null)
+            return;
+
+        if(root.left != null)
+            root.left.next = root.right;
+
+        if(root.right!= null && root.next != null)
+            root.right.next = root.next.left;
+
+        connect(root.left);
+        connect(root.right);
+
+    }
+
+#3.
+public class Solution {
+    public void connect(TreeLinkNode root) {
+        TreeLinkNode level = root;
+        while(level != null){
+            TreeLinkNode cur = level;
+            while(cur != null){
+                TreeLinkNode left = cur.left;
+                TreeLinkNode right = cur.right;
+
+                if(left != null){
+                    left.next = right;
+                }
+                if(right != null && cur.next != null){
+                    right.next = cur.next.left;
+                }
+                cur = cur.next;
+            }
+            level = level.left;
+        }
+    }
+}

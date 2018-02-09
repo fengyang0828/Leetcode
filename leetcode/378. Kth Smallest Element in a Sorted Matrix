@@ -1,0 +1,94 @@
+#1. Totally wrong idea!!!!
+
+class Solution {
+    public int kthSmallest(int[][] matrix, int k) {
+        if(matrix == null || matrix.length == 0 || matrix[0].length == 0 || k == 0)
+            return 0;
+        int n = matrix[0].length;
+        int sum = 0;
+        int i = 0;
+        boolean flag = true;
+        while(sum <= k){
+            if(i < n){
+                i++;
+            }
+            else{
+                i--;
+                flag = false;
+            }
+            sum += i;
+
+        }
+        ArrayList<Integer> targetList = new ArrayList<>();
+        System.out.println(i);
+        int start = 0;
+        int end = i - 1;
+        if(flag){
+            while(start < i)
+            {
+                targetList.add(matrix[start][end]);
+                start ++;
+                end --;
+            }
+        }
+        else{
+            start = n - i;
+            end = n - 1;
+            while(start < n){
+                targetList.add(matrix[start][end]);
+                start ++;
+                end --;
+            }
+        }
+        System.out.println(targetList.size());
+        Collections.sort(targetList,new Comparator<Integer>(){
+            public int compare(Integer a,Integer b){
+                return a - b;
+        }});
+        if(k == sum)
+            return targetList.get(0);
+        else
+            return targetList.get(sum - k - 1);
+    }
+}
+
+#2. Use min_heap
+    Build a minHeap of elements from the first row.
+    Do the following operations k-1 times :
+    Every time when you poll out the root(Top Element in Heap),
+    you need to know the row number and column number of that element(so we can create a tuple class here),
+    replace that root with the next element from the same column.
+
+    The time complexity is O(k*logn)
+class Solution {
+    public int kthSmallest(int[][] matrix, int k) {
+        PriorityQueue<Tuple> pq = new PriorityQueue<>();
+        int n = matrix.length;
+        for(int i = 0; i < n; i++){
+            pq.offer(new Tuple(0, i, matrix[0][i]));
+        }
+        for(int i = 0; i < k - 1; i++){
+            Tuple t = pq.poll();
+            if(t.x == n - 1) continue;
+            pq.offer(new Tuple(t.x + 1, t.y, matrix[t.x + 1][t.y]));
+        }
+        return pq.poll().val;
+    }
+
+    private class Tuple implements Comparable<Tuple>
+    {
+        int x;
+        int y;
+        int val;
+        public Tuple(int x, int y, int val){
+            this.x = x;
+            this.y = y;
+            this.val = val;
+        }
+
+        @Override
+        public int compareTo(Tuple a){
+            return this.val - a.val;
+        }
+    }
+}
