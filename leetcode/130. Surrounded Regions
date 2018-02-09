@@ -61,7 +61,7 @@ class Solution {
                         board[i][j] = '#'; // 注意1！！！
                         q.offer(new Point(i, j));
                     }
-                        
+
             }
         }
 

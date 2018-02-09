@@ -1,0 +1,4 @@
+综上所述，总结规律：
+1. 当数组中没有重复元素时：while循环判定条件是(start <= end)，每次start更新为mid + 1，end更新为mid – 1。
+2. 当数组中含有重复元素时或者要找的值是target的相邻数时，判定条件是(start + 1 < end)，当num[mid] == target时，并不返回mid，而是根据情况跟新start或者end。
+   每次start更新为mid，end也更新为mid即可。
