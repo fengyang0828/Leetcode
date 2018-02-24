@@ -1,0 +1,54 @@
+#1. for each bar, we know that if it can contain water, then, A[left] or A[right] will be larger than A[i], and the number
+    should be min(A[L], A[R]) - A[i], so we can maintain two arrays and figure out this question.
+
+class Solution {
+    public int trap(int[] height) {
+        if(height == null || height.length == 0) return 0;
+        int n = height.length;
+        int[] left = new int[n];
+        int[] right = new int[n];
+
+        left[0] = height[0];
+        right[n - 1] = height[n - 1];
+        for(int i = 1; i < n; i++){
+            left[i] = Math.max(height[i], left[i - 1]);
+        }
+
+        for(int i = n - 2; i >= 0; i--){
+            right[i] = Math.max(height[i], right[i + 1]);
+        }
+
+        int result = 0;
+        for(int i = 0; i < height.length; i++){
+            result += Math.min(left[i], right[i]) - height[i];
+        }
+        return result;
+    }
+}
+
+#2. can optimize the algorithm to use only one array
+class Solution {
+    public int trap(int[] height) {
+        if(height == null || height.length == 0) return 0;
+        int n = height.length;
+        int[] left = new int[n];
+        int rightMax = height[n - 1];
+
+        left[0] = height[0];
+        for(int i = 1; i < n; i++){
+            left[i] = Math.max(height[i], left[i - 1]);
+        }
+
+        int result = 0;
+        for(int i = n - 2; i >= 0; i--){
+            rightMax = Math.max(height[i], rightMax);
+            result += Math.min(left[i], rightMax) - height[i];
+        }
+        return result;
+    }
+}
+
+#3. Use the two pointer to solve the problem
+
+
+

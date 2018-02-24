@@ -1,0 +1,28 @@
+#1. Very simple solution:
+
+first can assign count = 0, will help understand this problem, calcualte all the constiutive 0 in the array
+and if there are 3 consective 0, we can plant 1 flower, if there are 5 0s, we can plant two, so the result add (count-1)/2
+in the end, after the loop, if count != 0, which means there are concensutive 0s in the end of array, so we need to add count / 2;
+
+Back to the start, why assign count = 1 in the first?
+because there is a special case that there are two concensutive 0s in the beginning of the array, so we can solve this special case by this way.
+
+class Solution {
+
+    public boolean canPlaceFlowers(int[] flowerbed, int n) {
+        int count = 1;
+        int result = 0;
+        for(int i = 0; i < flowerbed.length; i ++){
+            if(flowerbed[i] == 0){
+                count ++;
+            }
+            else{
+                result += (count - 1) / 2;
+                count = 0;
+            }
+        }
+        if(count != 0) result += count / 2;
+        return result >= n;
+
+    }
+}

@@ -1,0 +1,74 @@
+#1. Use the same way as 219..
+    but we need to change the map type to long, because if not, will not handle the max value
+The time complexity is O(n ^ 2) and will cause TLE
+class Solution {
+    public boolean containsNearbyAlmostDuplicate(int[] nums, int k, int t) {
+        HashMap<Long, Long> map = new HashMap<>();
+        for (int i = 0; i < nums.length; i++){
+            for(long p: map.keySet()){
+                if(Math.abs((long)nums[i] - p) <= t && i - map.get(p) <= k){
+                    return true;
+                }
+            }
+            map.put((long)nums[i], (long)i);
+        }
+        return false;
+    }
+}
+
+#2. How to solve the TLE question: I find out that the TLE is because of the t = 0, when t = 0, the question backs to the #219.
+    So I add a condition to check if t == 0 and otherwise, i use a slide window to solve this problem
+    the time complexity is O(n + tn)
+class Solution {
+    public boolean containsNearbyAlmostDuplicate(int[] nums, int k, int t) {
+        HashMap<Long, Long> map = new HashMap<>();
+        if (t == 0) {
+            for (int i = 0; i < nums.length; i++) {
+                if (map.containsKey((long)nums[i])) {
+                    if (i -  map.get((long)nums[i]) <= k)
+                        return true;
+                }
+                map.put((long)nums[i], (long)i);
+            }
+            return false;
+        }
+        else{
+            for (int i = 0; i < nums.length; i++){
+                int j = i - k >= 0 ? i - k : 0;
+                for (; j < i; j++) {
+                    if (Math.abs((long)nums[j] -  (long)nums[i]) <= t) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+    }
+}
+
+#3. TreeSet, use treeset to maintain a k set of elements, and find if in these elements there is no 
+    First time to use treeSet, treeSet i
+class Solution {
+    public boolean containsNearbyAlmostDuplicate(int[] nums, int k, int t) {
+        if (nums == null || nums.length < 2 || k < 1 || t < 0) {
+            return false;
+        }
+        TreeSet<Long> kSet = new TreeSet<>();
+        for (int i = 0; i < nums.length; i++) {
+            Long num = (long) nums[i];
+            if ((kSet.floor(num) != null && num - kSet.floor(num) <= t)
+                    || (kSet.ceiling(num) != null && kSet.ceiling(num) - num <= t)) {
+                return true;
+            }
+            else {
+                kSet.add(num);
+            }
+
+            if(i >= k) {
+                kSet.remove((long)nums[i - k]);
+            }
+        }
+        return false;
+    }
+}
