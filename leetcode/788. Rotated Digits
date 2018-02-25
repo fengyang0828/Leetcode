@@ -1,0 +1,36 @@
+#1. ac solution, not beautiful..
+class Solution {
+    public int rotatedDigits(int N) {
+        int res = 0;
+        HashMap<Integer, Integer> map = new HashMap<>();
+        map.put(2, 5);
+        map.put(6, 9);
+        map.put(5, 2);
+        map.put(9, 6);
+        map.put(0, 0);
+        map.put(1, 1);
+        map.put(8, 8);
+        StringBuilder sb;
+        int flag = 0;
+        for (int i = 1; i <= N; i++) {
+            int temp = i;
+            sb = new StringBuilder();
+            while (temp != 0) {
+                int result = temp % 10;
+                if (!map.containsKey(result)) {
+                    flag = 1;
+                    break;
+                }
+                temp = temp / 10;
+                sb.insert(0, map.get(result));
+            }
+            if (flag == 0) {
+                if (Integer.valueOf(sb.toString()) != i) {
+                    res++;
+                }
+            }
+            flag = 0;
+        }
+        return res;
+    }
+}

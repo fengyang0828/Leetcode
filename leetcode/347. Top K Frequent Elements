@@ -1,0 +1,34 @@
+#1. When we need to calculate the frequency of something and we need to sort them
+#2. Or use the bucket sort like #451
+    We can use a priorityQueue to realize the function.
+    The timeComplexity is O(nlogn), but there are limited number
+    The spaceComplexity is O(n)
+class Solution {
+    public List<Integer> topKFrequent(int[] nums, int k) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (map.containsKey(nums[i])) {
+                map.put(nums[i], map.get(nums[i]) + 1);
+            }
+            else {
+                map.put(nums[i], 1);
+            }
+        }
+
+        PriorityQueue<Map.Entry<Integer, Integer>> pq = new PriorityQueue<>(new Comparator<Map.Entry<Integer, Integer>>(){
+            @Override
+            public int compare(Map.Entry<Integer, Integer> mp1, Map.Entry<Integer, Integer> mp2) {
+                return mp2.getValue() - mp1.getValue();
+            }
+        });
+
+        List<Integer> result = (ArrayList) new ArrayList<>();
+        pq.addAll(map.entrySet());
+        while (!pq.isEmpty() && k > 0) {
+            Map.Entry<Integer, Integer> mp = pq.poll();
+            result.add(mp.getKey());
+            k--;
+        }
+        return result;
+    }
+}

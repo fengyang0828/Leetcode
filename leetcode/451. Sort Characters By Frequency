@@ -1,0 +1,78 @@
+#1. Simple idea
+    Brute force
+    The time complexity is O(n)
+    The space complexity is O(n)
+
+class Solution {
+    public String frequencySort(String s) {
+        Map<Character, Integer> map = new HashMap<>();
+        for (int i = 0; i < s.length(); i++) {
+            Character c = s.charAt(i);
+            if (map.containsKey(c)) {
+                map.put(c, map.get(c) + 1);
+            }
+            else {
+                map.put(c, 1);
+            }
+        }
+
+        // here we need a buckets with s.length() + 1, because we may have the frequency which equals to s.length()
+        ArrayList<Character>[] buckets = new ArrayList[s.length() + 1];
+        for (Character c : map.keySet()) {
+            int freq = map.get(c);
+            if (buckets[freq] == null) {
+                buckets[freq] = new ArrayList<>();
+            }
+            buckets[freq].add(c);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = buckets.length - 1; i >= 0; i--) {
+            if (buckets[i] != null) {
+                for (int numList = 0; numList < buckets[i].size(); numList++) {
+                    for (int j = 0; j < i; j++)
+                    {
+                        sb.append(buckets[i].get(numList));
+                    }
+                }
+
+            }
+        }
+        return sb.toString();
+    }
+}
+
+#2. Use heap, the time complexity is O(nlogn), but we can say it is O(n) because we only have most 52 entrys
+    space complexity is O(n)
+
+class Solution {
+    public String frequencySort(String s) {
+        Map<Character, Integer> map = new HashMap<>();
+        for (int i = 0; i < s.length(); i++) {
+            Character c = s.charAt(i);
+            if (map.containsKey(c)) {
+                map.put(c, map.get(c) + 1);
+            }
+            else {
+                map.put(c, 1);
+            }
+        }
+
+        PriorityQueue<Map.Entry<Character, Integer>> pq = new PriorityQueue<>(new Comparator<Map.Entry<Character, Integer>>(){
+            @Override
+            public int compare(Map.Entry<Character, Integer> mp1, Map.Entry<Character, Integer> mp2) {
+                return mp2.getValue() - mp1.getValue();
+            }
+        });
+
+        pq.addAll(map.entrySet());
+        StringBuilder sb = new StringBuilder();
+        while (!pq.isEmpty()) {
+            Map.Entry<Character, Integer> keyValue = pq.poll();
+            for (int i = 0; i < keyValue.getValue(); i++) {
+                sb.append(keyValue.getKey());
+            }
+        }
+        return sb.toString();
+    }
+}

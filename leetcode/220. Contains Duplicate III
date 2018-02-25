@@ -47,8 +47,14 @@ class Solution {
     }
 }
 
-#3. TreeSet, use treeset to maintain a k set of elements, and find if in these elements there is no 
-    First time to use treeSet, treeSet i
+#3. TreeSet, use treeset to maintain a k set of elements, and find if in these elements there is nums[i] - nums[j] <=t
+    First time to use treeSet, treeSet is a set which is a sorted hashmap, and its cause logn to insert and remove.
+    use its floor and ceil:
+    floor(c): return the most near element which is smaller than c
+    ceil(c): return the most near element which is bigger than c
+    And do not forget to remove the element to maintain the size of the set is always k
+    The time complexity is O(logn + logn + logn)
+
 class Solution {
     public boolean containsNearbyAlmostDuplicate(int[] nums, int k, int t) {
         if (nums == null || nums.length < 2 || k < 1 || t < 0) {
@@ -72,3 +78,5 @@ class Solution {
         return false;
     }
 }
+
+#4. Buckets

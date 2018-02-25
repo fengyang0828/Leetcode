@@ -1,0 +1,58 @@
+#1. very straigthforward solution... but there is three cases need to discuss..
+class Solution {
+    public String reverseStr(String s, int k) {
+        int len = s.length();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < len; i += 2 * k) {
+            // reverse the k character in the buckets
+            int end = (i + k <= len ? i + k : len);
+            String temp = s.substring(i, end);
+            char[] array = temp.toCharArray();
+            if (array.length > 1)
+                swap (array);
+            sb.append(new String(array));
+            if (i + k < len) {
+                int end2 = (i + 2 * k <= len ? i + 2 * k : len);
+                sb.append(s.substring(i + k, end2));
+            }
+
+        }
+        return sb.toString();
+    }
+
+    public void swap (char[] array) {
+        int i = 0;
+        int j = array.length - 1;
+        while (i < j) {
+            char temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+            i++;
+            j--;
+        }
+    }
+}
+
+#2. Convert to chararray would avoid these problem..
+    class Solution {
+        public String reverseStr(String s, int k) {
+            int len = s.length();
+            char[] array = s.toCharArray();
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < len; i += 2 * k) {
+                int j = Math.min(i + k - 1, len - 1);
+                swap(array, i, j);
+            }
+            return new String(array);
+        }
+
+        public void swap (char[] array, int i, int j) {
+            while (i < j) {
+                char temp = array[i];
+                array[i] = array[j];
+                array[j] = temp;
+                i++;
+                j--;
+            }
+        }
+    }

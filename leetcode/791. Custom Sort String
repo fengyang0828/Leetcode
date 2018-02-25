@@ -1,0 +1,39 @@
+class Solution {
+    public String customSortString(String S, String T) {
+        char[] temp = T.toCharArray();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < S.length(); i++) {
+            for (int j = 0; j < T.length(); j++) {
+                if (S.charAt(i) == T.charAt(j)){
+                    sb.append(T.charAt(j));
+                    temp[j] = '#';
+                }
+            }
+        }
+        for (int i = 0; i < T.length(); i++) {
+            if (temp[i] != '#') {
+                sb.append(temp[i]);
+            }
+        }
+        return sb.toString();
+    }
+}class Solution {
+     public String customSortString(String S, String T) {
+         char[] temp = T.toCharArray();
+         StringBuilder sb = new StringBuilder();
+         for (int i = 0; i < S.length(); i++) {
+             for (int j = 0; j < T.length(); j++) {
+                 if (S.charAt(i) == T.charAt(j)){
+                     sb.append(T.charAt(j));
+                     temp[j] = '#';
+                 }
+             }
+         }
+         for (int i = 0; i < T.length(); i++) {
+             if (temp[i] != '#') {
+                 sb.append(temp[i]);
+             }
+         }
+         return sb.toString();
+     }
+ }

@@ -1,0 +1,95 @@
+#1. For the parenthesis, stack is not the only way, use scan from right and left can solve this problem also.
+#1. very clear idea, use two stack for '()' and '*'. The only difference here is that we need to add the index of the character, but not the simple
+    character itself.
+    for '(', add the index of (
+    for '*', add the index of *
+    for ')', if left is not null, pop left, if left is empty, pop star, if left and star are all empty.
+    after the traverse of the string, we need to compare the * and the ('s index, if the '(''s index is bigger than '*''s index, then return false
+class Solution {
+    public boolean checkValidString(String s) {
+        Stack<Integer> left = new Stack<>();
+        Stack<Integer> star = new Stack<>();
+
+        for (int i = 0; i < s.length(); i++) {
+            char cur = s.charAt(i);
+            if (cur == '(') {
+                left.push(i);
+            }
+            else if (cur == '*') {
+                star.push(i);
+            }
+            else {
+                if (left.isEmpty() && star.isEmpty()) {
+                    return false;
+                }
+                if (!left.isEmpty()) {
+                    left.pop();
+                }
+                else if (!star.isEmpty()) {
+                    star.pop();
+                }
+            }
+        }
+        while (!left.isEmpty() && !star.isEmpty()) {
+            if (left.pop() > star.pop()) {
+                return false;
+            }
+        }
+        return left.isEmpty();
+    }
+}
+
+#2. More optimal way O(n) time and O(1) space, scan from left to right and from right to left
+class Solution {
+    public boolean checkValidString(String s) {
+        return checkFromLeft(s) && checkFromRight(s);
+    }
+
+    public boolean checkFromLeft(String s) {
+        int open = 0, close = 0, star = 0;
+        for (int i = 0; i < s.length(); i++) {
+            char cur = s.charAt(i);
+            if (cur == '(') {
+                open++;
+            }
+            else if (cur == ')') {
+                close++;
+            }
+            else {
+                star++;
+            }
+
+            if (close > open + star) {
+                return false;
+            }
+        }
+        if (close == open || close - open <= star)
+            return true;
+        else
+            return false;
+    }
+
+    public boolean checkFromRight(String s) {
+        int open = 0, close = 0, star = 0;
+        for (int i = s.length() - 1; i >= 0; i--) {
+            char cur = s.charAt(i);
+            if (cur == ')') {
+                open++;
+            }
+            else if (cur == '(') {
+                close++;
+            }
+            else {
+                star ++;
+            }
+
+            if (close > open + star) {
+                return false;
+            }
+        }
+        if (close == open || close - open <= star)
+            return true;
+        else
+            return false;
+    }
+}

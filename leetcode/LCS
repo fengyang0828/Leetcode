@@ -1,0 +1,34 @@
+LCS up to bottom
+这里要注意！！！dp[i][j] 代表的是A[i]&B[j]的最长公共子序列，因此最后要返回的是dp[m][n] 而不是 dp[m-1][n-1]
+class Solution {
+    int[][] dp;
+    public int findLength(int[] A, int[] B) {
+        if (A == null || A.length == 0 || B == null || B.length == 0) {
+            return 0;
+        }
+        int m = A.length;
+        int n = B.length;
+        dp = new int[m + 1][n + 1];
+        return helper(A, B, m, n);
+    }
+
+    public int helper(int[] A, int[] B, int i, int j) {
+        if (i == 0 || j == 0) {
+            dp[i][j] = 0;
+            return 0;
+        }
+        if (dp[i][j] != 0) {
+            return dp[i][j];
+        }
+
+        if (A[i - 1] == B[j - 1]) {
+            dp[i][j] = 1 + helper(A, B, i - 1, j - 1);
+        }
+        else {
+            dp[i][j] = Math.max(helper(A, B, i - 1, j), helper(A, B, i, j - 1));
+        }
+        return dp[i][j];
+    }
+
+
+}
