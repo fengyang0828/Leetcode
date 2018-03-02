@@ -1,0 +1,19 @@
+#1. 脑子不清醒。。做不出。。
+    class Solution {
+        public int strStr(String haystack, String needle) {
+            int l1 = haystack.length();
+            int l2 = needle.length();
+            for (int i = 0; i < l1 - l2 + 1; i++) {
+                int j = 0;
+                for (; j < needle.length(); j++) {
+                    if (haystack.charAt(i+j) != needle.charAt(j)) {
+                        break;
+                    }
+                }
+                if (j == needle.length()) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+    }

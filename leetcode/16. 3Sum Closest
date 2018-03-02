@@ -1,0 +1,71 @@
+#1. 3sum question can always solve by O(n ^ 3), but use two pointer, we can solve it in O(n ^ 2)
+class Solution {
+    public int threeSumClosest(int[] nums, int target) {
+        int length = nums.length;
+        int min = Integer.MAX_VALUE;
+        int result = 0;
+        for (int i = 0; i < length - 2; i++) {
+            for (int j = i + 1; j < length - 1; j++) {
+                for (int k = j + 1; k < length; k++) {
+                    int sum = nums[i] + nums[j] + nums[k];
+                    if (min > Math.abs(sum - target)) {
+                        min = Math.abs(sum - target);
+                        result = sum;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+}
+
+#2. use two pointer, we can solve it in O(n ^ 2).
+    the hint is the result!!, do not simply use any other value, but the value inside the nums.
+
+        int length = nums.length;
+        Arrays.sort(nums);
+        //int result = Integer.MAX_VALUE;
+        int result = nums[0] + nums[1] + nums[length - 1];
+        for (int i = 0; i < length - 2; i++) {
+            int j = i + 1;
+            int k = length - 1;
+            while (j < k) {
+                int sum = nums[j] + nums[k] + nums[i];
+                if (sum < target) {
+                    j++;
+                }
+                else {
+                    k--;
+                }
+                if (Math.abs(sum - target) < Math.abs(result - target)) {
+                    result = sum;
+                }
+            }
+        }
+        return result;
+
+#3. use pointer to avoid the duplicate elements
+
+        int length = nums.length;
+        Arrays.sort(nums);
+        int result = nums[0] + nums[1] + nums[length - 1];
+        for (int i = 0; i < length - 2; i++) {
+            int j = i + 1;
+            int k = length - 1;
+            while (j < k) {
+                int sum = nums[j] + nums[k] + nums[i];
+                if (sum < target) {
+                    while (j < k && nums[j] == nums[j + 1]) j++;
+                    j++;
+                }
+                else {
+                    while (j < k && nums[k] == nums[k - 1]) k--;
+                    k--;
+                }
+                if (Math.abs(sum - target) < Math.abs(result - target)) {
+
+                    result = sum;
+                }
+            }
+        }
+        return result;

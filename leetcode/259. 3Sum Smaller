@@ -1,3 +1,4 @@
+Ask for if there is duplicate first and for this question, they do not care about the duplicate.
 #1. brute force: choose three from the array, and find all pairs that satisfy sum < target
     The time complexity is actually O(n ^ 3) since Cn 3 will need n(n - 1)(n) / 6
 class Solution {
