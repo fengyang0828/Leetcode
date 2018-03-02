@@ -1,5 +1,5 @@
 LCS up to bottom
-这里要注意！！！dp[i][j] 代表的是A[i]&B[j]的最长公共子序列，因此最后要返回的是dp[m][n] 而不是 dp[m-1][n-1]
+这里要注意！！！dp[0][j] 代表是 0 序列，所以dp[1][i] 才是A[0]与［j] 的LC， dp[i][j] 代表的是A[i]&B[j]的最长公共子序列，因此最后要返回的是dp[m][n] 而不是 dp[m-1][n-1]
 class Solution {
     int[][] dp;
     public int findLength(int[] A, int[] B) {

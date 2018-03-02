@@ -1,0 +1,43 @@
+#1. Very straightforward method: will cause TLE
+class Solution {
+    public int maxArea(int[] height) {
+        int n = height.length;
+        int result = 0;
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 1; j < n; j++) {
+                int temp = Math.min(height[i], height[j]) * (j - i);
+                result = Math.max(temp, result);
+            }
+        }
+        return result;
+    }
+}
+
+#2. Could implement if the left < preleft, then skip the j loop.
+#3. Why this would work?
+    The approval:
+    Since we are always moving the pointer with the smaller value,
+    i.e. if a10 > a21, we should move pointer at a21 to a20, as we hope. Why a10 >a21?
+    Because if a21>a10, then area of a10 and a20 must be less than area of a10 and a21.
+    Because the area of a10 and a21 is at least height[a10] * (21-10) while the area of a10 and a20 is at most height[a10] * (20-10).
+    So there is a contradiction of assumption a10 and a20 has the max area.
+    So, a10 must be greater than a21, then next move a21 has to be move to a20. The max cases must be reached.
+class Solution {
+        public int maxArea(int[] height) {
+            int n = height.length;
+            int result = 0;
+            int left = 0;
+            int right = n - 1;
+            while (left < right) {
+                int temp = Math.min(height[left], height[right]) * (right - left);
+                result = Math.max(temp, result);
+                if (height[left] < height[right]) {
+                    left ++;
+                }
+                else {
+                    right --;
+                }
+            }
+            return result;
+        }
+    }

@@ -1,0 +1,44 @@
+#1. use one while to remove the duplicate head value
+class Solution {
+    public ListNode removeElements(ListNode head, int val) {
+        while (head != null && head.val == val) head = head.next;
+        ListNode pre = new ListNode(0);
+        pre.next = head;
+        ListNode cur = head;
+        while (cur != null) {
+            if (cur.val == val) {
+                pre.next = cur.next;
+                cur = cur.next;
+            }
+            else {
+                pre = pre.next;
+                cur = cur.next;
+            }
+
+        }
+        return head;
+
+    }
+}
+
+#2. Or use the fakedhead to solve the problem.
+class Solution {
+    public ListNode removeElements(ListNode head, int val) {
+        ListNode fakedHead = new ListNode(-1);
+        fakedHead.next = head;
+        ListNode pre = fakedHead;
+        ListNode cur = head;
+        while (cur != null) {
+            if (cur.val == val) {
+                pre.next = cur.next;
+                cur = cur.next;
+            }
+            else {
+                pre = pre.next;
+                cur = cur.next;
+            }
+
+        }
+        return fakedHead.next;
+    }
+}

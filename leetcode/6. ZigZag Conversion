@@ -1,0 +1,56 @@
+#1. O(n) easy solution
+class Solution {
+    public String convert(String s, int numRows) {
+        if (numRows <= 1) {
+            return s;
+        }
+        StringBuilder[] res = new StringBuilder[numRows];
+        for (int i = 0; i < numRows; i++) {
+            res[i] = new StringBuilder();
+        }
+
+        for (int i = 0; i < s.length(); i++) {
+            int index = i % (numRows + numRows - 2);
+            if (index < numRows) {
+                res[index].append(s.charAt(i));
+            }
+            else {
+                int newindex = numRows - 1 - (index + 1) % numRows;
+                res[newindex].append(s.charAt(i));
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < res.length; i++) {
+            sb.append(res[i].toString());
+        }
+        return sb.toString();
+    }
+}
+
+#2. Can be more optical when we reverse the string.
+class Solution {
+    public String convert(String s, int numRows) {
+        if (numRows <= 1) {
+            return s;
+        }
+        StringBuilder[] res = new StringBuilder[numRows];
+        for (int i = 0; i < numRows; i++) {
+            res[i] = new StringBuilder();
+        }
+        int index = 0;
+        int direction = -1;
+        for (int i = 0; i < s.length(); i++) {
+            res[index].append(s.charAt(i));
+            if (index == 0 || index == numRows - 1) {
+                direction = -direction;
+            }
+            index += direction;
+
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < res.length; i++) {
+            sb.append(res[i].toString());
+        }
+        return sb.toString();
+    }
+}
