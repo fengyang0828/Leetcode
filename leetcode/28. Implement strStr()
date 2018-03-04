@@ -1,4 +1,5 @@
 #1. 脑子不清醒。。做不出。。
+    一定要想清楚i 的范围！！！
     class Solution {
         public int strStr(String haystack, String needle) {
             int l1 = haystack.length();

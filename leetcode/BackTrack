@@ -35,7 +35,8 @@ public void backtrack(int[] nums, int start)
     }
 
     Big idea : add nums[start] and backtrack the rest to find all the combination
-    do not add nums[start], then backtrack the other
+
+    !!!! not use the loop
     if(!result.contains(currlist))
         result.add(new ArrayList<>(currlist));
         if(start >= nums.length)

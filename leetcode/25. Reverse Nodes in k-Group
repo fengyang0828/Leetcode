@@ -1,0 +1,84 @@
+#1. 一次reverse个够哈哈，linkedlist题目不难，但是真的要好好想清楚！！
+    注意，pre = start
+    cur = cur2(原来cur的next)
+    The time complexity is O(n + n) = O(n)
+    class Solution {
+        public ListNode reverseKGroup(ListNode head, int k) {
+            ListNode dummyHead = new ListNode(0);
+            dummyHead.next = head;
+            ListNode pre = dummyHead;
+            ListNode cur = head;
+            ListNode next = head;
+            ListNode start = head;
+            int count = 1;
+            while (cur != null) {
+                next = cur.next;
+                if (count == k) {
+                    cur.next = null;
+                    start = pre.next;
+                    ListNode newHead = reverseLinkedList(start);
+                    start.next = next;
+                    pre.next = newHead;
+                    pre = start;
+                    cur = next;
+                    count = 1;
+                }
+                else {
+                    cur = cur.next;
+                    count++;
+                }
+            }
+            return dummyHead.next;
+        }
+
+        public ListNode reverseLinkedList(ListNode head) {
+            ListNode next = head;
+            ListNode pre = null;
+            ListNode cur = head;
+            while (cur != null) {
+                next = cur.next;
+                cur.next = pre;
+                pre = cur;
+                cur = next;
+            }
+            return pre;
+        }
+    }
+
+#2. Another way!!
+    pre = preCur/ start!!!!! and in this way tail must change !!!!
+    头脑不清楚／／
+class Solution {
+    public ListNode reverseKGroup(ListNode head, int k) {
+        ListNode dummyHead = new ListNode(0);
+        dummyHead.next = head;
+        ListNode pre = dummyHead;
+        ListNode cur = head;
+        ListNode tail = dummyHead;
+        while (true) {
+            if (tail == null) {
+                return dummyHead.next;
+            }
+            for (int i = 1; i <= k; i++) {
+                tail = tail.next;
+                if (tail == null) {
+                    return dummyHead.next;
+                }
+            }
+            ListNode preCur = cur;
+            ListNode prePre = pre;
+            ListNode next = cur;
+            for (int i = 1; i <= k; i++) {
+                next = cur.next;
+                cur.next = pre;
+                pre = cur;
+                cur = next;
+            }
+            System.out.println(pre.val);
+            preCur.next = cur;
+            prePre.next = pre;
+            pre = preCur;
+            tail = pre;
+        }
+    }
+}

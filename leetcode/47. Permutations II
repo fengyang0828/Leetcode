@@ -1,0 +1,42 @@
+#1. 又重复的情况下，先对nums 排序，然后用以下方法避免重复可以优化非常多
+
+class Solution {
+    List<List<Integer>> result;
+    List<Integer> curlist;
+    HashSet<String> visited;
+    public List<List<Integer>> permuteUnique(int[] nums) {
+        Arrays.sort(nums);
+        result = (ArrayList)new ArrayList<>();
+        curlist = (ArrayList)new ArrayList<>();
+        visited = new HashSet<>();
+        permutation(nums, 0);
+        return result;
+    }
+
+    public void permutation(int[] nums, int start) {
+        if (start == nums.length) {
+            if (!visited.contains(Arrays.toString(nums))) {
+                visited.add(Arrays.toString(nums));
+                ArrayList<Integer> clone = new ArrayList<>(curlist);
+                result.add(clone);
+            }
+            return;
+        }
+        int prev = Integer.MIN_VALUE;
+        for (int i = start; i < nums.length; i++) {
+            if (prev == nums[i]) continue;
+            prev = nums[i];
+            swap(nums, i, start);
+            curlist.add(nums[start]);
+            permutation(nums, start + 1);
+            swap(nums, i, start);
+            curlist.remove(curlist.size() - 1);
+        }
+    }
+
+    public void swap(int[] nums, int i, int j) {
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
+    }
+}

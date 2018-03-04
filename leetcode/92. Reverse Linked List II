@@ -1,0 +1,32 @@
+#1. The important thing is to reverse the linedlist in O(n)
+class Solution {
+    public ListNode reverseBetween(ListNode head, int m, int n) {
+        if (n - m == 0) {
+            return head;
+        }
+        ListNode dummyHead = new ListNode(0);
+        dummyHead.next = head;
+        ListNode pre = dummyHead;
+        ListNode cur = head;
+        for (int i = 1; i < m; i++) {
+            pre = cur;
+            cur = cur.next;
+        }
+        // now cur means the m node starts to reverse
+        // and pre means the pre node of the m node to connect in the below.
+
+        ListNode pre2 = pre;
+        ListNode cur2 = cur;
+        ListNode next = cur;
+        for (int i = m; i <= n; i++) {
+            next = cur2.next;
+            cur2.next = pre2;
+            pre2 = cur2;
+            cur2 = next;
+        }
+        // cur2 means the next node of the n node. now we can connect
+        pre.next = pre2;
+        cur.next = cur2;
+        return dummyHead.next;
+    }
+}

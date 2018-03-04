@@ -1,0 +1,28 @@
+#1. We need to consider a lot of conditions
+
+    class Solution {
+        public ListNode deleteDuplicates(ListNode head) {
+            if (head == null) {
+                return head;
+            }
+            ListNode dummyHead = new ListNode(0);
+            dummyHead.next = head;
+            ListNode pre = dummyHead;
+            ListNode cur = head;
+            int lastDuplicate = head.val;
+            while (cur != null) {
+                if (cur != head && cur.val == lastDuplicate) {
+                    pre.next = cur.next;
+                }
+                else {
+                    lastDuplicate = cur.val;
+                    ListNode next = cur.next;
+                    if (next != null && next.val != cur.val) {
+                        pre = pre.next;
+                    }
+                }
+                cur = cur.next;
+            }
+            return dummyHead.next;
+        }
+    }

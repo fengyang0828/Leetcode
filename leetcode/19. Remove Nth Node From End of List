@@ -1,0 +1,25 @@
+#1. In one pass, use two pointer!!
+    when we use pointer, the dummyHead is a very important hint for all the linkedlist problem
+    class Solution {
+        public ListNode removeNthFromEnd(ListNode head, int n) {
+            ListNode cur = head;
+            ListNode fakedHead = new ListNode(-1);
+            fakedHead.next = head;
+            ListNode pre = fakedHead;
+            int count = 0;
+            while (cur != null) {
+                if (count > n - 1) {
+                    pre = pre.next;
+                }
+                count++;
+                cur = cur.next;
+            }
+            if (pre.next != null) {
+                pre.next = pre.next.next;
+            }
+            else {
+                pre.next = null;
+            }
+            return fakedHead.next;
+        }
+    }

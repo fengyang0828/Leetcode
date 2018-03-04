@@ -1,0 +1,30 @@
+#1. Iterator way:
+    The runtime is O(n).
+    For linkedlist the most important thing is to 想好这个node 和 node next是什么，把一个node全部完成之后，再赋值给别的node，千万不可交叉赋值！！
+    class Solution {
+        public ListNode swapPairs(ListNode head) {
+            ListNode dummyHead = new ListNode(0);
+            dummyHead.next = head;
+            ListNode pre = dummyHead;
+            ListNode cur = head;
+            int count = 1;
+            ListNode pair1 = head;
+            while (cur != null) {
+                if (count == 2) {
+                    pair1 = pre.next;
+                    pair1.next = cur.next;
+                    cur.next = pair1;
+                    pre.next = cur;
+                    pre = pair1;
+                    cur = pair1.next;
+                    count = 1;
+                }
+                else {
+                    cur = cur.next;
+                    count++;
+                }
+            }
+            return dummyHead.next;
+        }
+    }
+＃2. More effienty way: recursive way
