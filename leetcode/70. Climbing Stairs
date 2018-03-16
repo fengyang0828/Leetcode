@@ -1,0 +1,39 @@
+#1. 经典的斐波纳妾题目：直接递归会TLE , 可用dp进行改进：
+
+    class Solution {
+        public int climbStairs(int n) {
+            if (n == 1) {
+                return 1;
+            }
+            else if (n == 2) {
+                return 2;
+            }
+            int result = climbStairs(n - 1) + climbStairs(n - 2);
+            return result;
+        }
+    }
+
+#2. dp 可通过所有testcase
+    class Solution {
+        public int climbStairs(int n) {
+            int[] dp = new int[n + 1];
+            return helper(n, dp);
+        }
+
+        public int helper(int n, int[] dp) {
+            if (n <= 0) {
+                return 0;
+            }
+            if (n == 1) {
+                return 1;
+            }
+            else if (n == 2) {
+                return 2;
+            }
+            if (dp[n] != 0) {
+                return dp[n];
+            }
+            dp[n] = helper(n - 1, dp) + helper(n - 2, dp);
+            return dp[n];
+        }
+    }
