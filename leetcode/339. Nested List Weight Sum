@@ -1,0 +1,20 @@
+#1. simple dfs
+class Solution {
+    int sum = 0;
+    public int depthSum(List<NestedInteger> nestedList) {
+        dfs(nestedList, 1);
+        return sum;
+    }
+
+    public void dfs(List<NestedInteger> nestedList, int depth) {
+        for (int i = 0; i < nestedList.size(); i++) {
+            NestedInteger temp = nestedList.get(i);
+            if (temp.isInteger()) {
+                sum += temp.getInteger() * depth;
+            }
+            else {
+                dfs(temp.getList(), depth + 1);
+            }
+        }
+    }
+}

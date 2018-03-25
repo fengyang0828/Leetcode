@@ -1,0 +1,28 @@
+#1. DFS question, but we should use an array to memeroize instead of use visited, because there will be stackoverflow
+    If a number is visited before, then the set that starts at this number must be smaller then
+    previous max. So we can safely skip this number. In total it's O(n) complexity.
+class Solution {
+    int maxLength = 0;
+    boolean[] visited;
+    public int arrayNesting(int[] nums) {
+        visited = new boolean[nums.length];
+        for (int i = 0; i < nums.length; i++) {
+            if (visited[i] == true) {
+                continue;
+            }
+            DFS(nums, nums[i], 1);
+            visited[i] = true;
+        }
+        return maxLength;
+    }
+
+    public void DFS(int[] nums, int source, int length) {
+        if (visited[source] == true) {
+            return;
+        }
+        visited[source] = true;
+        DFS(nums, nums[source],length + 1);
+        maxLength = Math.max(length, maxLength);
+    }
+}
+

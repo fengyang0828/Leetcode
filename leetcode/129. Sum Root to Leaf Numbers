@@ -1,0 +1,40 @@
+#1. DFS, 想清楚！！
+class Solution {
+    int result = 0;
+    public int sumNumbers(TreeNode root) {
+        helper(root, 0);
+        return result;
+    }
+
+    public void helper(TreeNode root, int presum) {
+        if (root == null) {
+            return;
+        }
+        if (root.left == null && root.right == null) {
+            int sum = presum*10 + root.val;
+            result += sum;
+            return;
+        }
+        helper(root.left, presum * 10 + root.val);
+        helper(root.right, presum * 10 + root.val);
+        return;
+    }
+}
+
+#2. Without the global value
+class Solution {
+    public int sumNumbers(TreeNode root) {
+        return helper(root, 0);
+    }
+
+    public int helper(TreeNode root, int presum) {
+        if (root == null) {
+            return 0;
+        }
+        if (root.left == null && root.right == null) {
+            int sum = presum*10 + root.val;
+            return sum;
+        }
+        return helper(root.left, presum * 10 + root.val) + helper(root.right, presum * 10 + root.val);
+    }
+}

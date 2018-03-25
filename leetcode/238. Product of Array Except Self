@@ -1,0 +1,19 @@
+#1. idiot question
+    take the first element and last element same as others.
+class Solution {
+    public int[] productExceptSelf(int[] nums) {
+        int n = nums.length;
+        int[] result = new int[n];
+        int right = 1;
+        for (int i = 0; i < nums.length; i++) {
+            result[i] = right;
+            right *= nums[i];
+        }
+        int left = 1;
+        for (int i = n - 1; i >= 0; i--) {
+            result[i] *= left;
+            left *= nums[i];
+        }
+        return result;
+    }
+}

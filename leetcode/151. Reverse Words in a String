@@ -1,0 +1,52 @@
+#1. Use stringbuilder and split and trim
+public class Solution {
+    public String reverseWords(String s) {
+        String[] split = s.trim().split("\\s+");
+        StringBuilder sb = new StringBuilder();
+        for (int i = split.length - 1; i >= 0; i--) {
+            sb.append(split[i]);
+            if (i == 0) {
+                continue;
+            }
+            sb.append(" ");
+        }
+        return sb.toString();
+    }
+}
+
+#2. in place:
+    reverse all the string
+    reverse every words
+
+    class Solution {
+        public void reverseWords(char[] str) {
+            //reverse the whole str
+            int start = 0;
+            int end = str.length - 1;
+            reverse(str, start, end);
+            int i = 0;
+            int j = 0;
+            while (j < end) {
+                while(i < end && str[i] == ' ') {
+                    i++;
+                }
+                j = i;
+                while(j <= end && str[j] != ' ') {
+                    j++;
+                }
+                reverse(str, i, j - 1);
+                i = j;
+            }
+        }
+
+        public void reverse(char[] str, int i, int j) {
+            while (i < j) {
+                char temp = str[i];
+                str[i] = str[j];
+                str[j] = temp;
+                i++;
+                j--;
+            }
+
+        }
+    }

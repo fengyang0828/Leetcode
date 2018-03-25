@@ -1,0 +1,23 @@
+#1. first count the len, and make the tail.next = head to make the linkedlist a circle
+    and then we can find the k and set it.next = null to cut the circle
+class Solution {
+    public ListNode rotateRight(ListNode head, int k) {
+        if (head == null) {
+            return head;
+        }
+        int len = 1;
+        ListNode p = head;
+        while (p.next != null) {
+            p = p.next;
+            len++;
+        }
+        p.next = head;
+        k = k % len;
+        for (int i = 0; i < len - k; i++) {
+            p = p.next;
+        }
+        ListNode newHead = p.next;
+        p.next = null;
+        return newHead;
+    }
+}

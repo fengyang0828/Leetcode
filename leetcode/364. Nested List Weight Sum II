@@ -1,0 +1,109 @@
+#1. Two way DFS to get depth first.
+class Solution {
+    public int depthSumInverse(List<NestedInteger> nestedList) {
+        int depth = getDepth(nestedList);
+        int sum = getSum(nestedList, depth);
+        return sum;
+    }
+
+    public int getSum(List<NestedInteger> nestedList, int depth) {
+        int sum = 0;
+        for (int i = 0; i < nestedList.size(); i++) {
+            NestedInteger temp = nestedList.get(i);
+            if (temp.isInteger()) {
+                sum += temp.getInteger() * depth;
+            }
+            else {
+                sum += getSum(temp.getList(), depth - 1);
+            }
+        }
+        return sum;
+    }
+
+    public int getDepth(List<NestedInteger> nestedList) {
+        int maxdepth = 1;
+        int depth = 1;
+        for (int i = 0; i < nestedList.size(); i++) {
+            NestedInteger temp = nestedList.get(i);
+            if (!temp.isInteger()) {
+                depth = getDepth(temp.getList()) + 1;
+            }
+            else {
+                depth = 1;
+            }
+            maxdepth = Math.max(maxdepth, depth);
+        }
+        return maxdepth;
+    }
+}
+
+#2. One way BFS
+    Instead of multiplying by depth, add integers multiple times (by going level by level
+    and adding the unweighted sum to the weighted sum after each level).
+
+    public int depthSumInverse(List<NestedInteger> nestedList) {
+        if (nestedList == null) {
+            return 0;
+        }
+        Queue<NestedInteger> q = new LinkedList<>();
+        int total = 0;
+        int prev = 0;
+        for (int i = 0; i < nestedList.size(); i++) {
+            q.offer(nestedList.get(i));
+        }
+        while (!q.isEmpty()) {
+            int size = q.size();
+            int levelSum = 0;
+            for (int i = 0; i < size; i++) {
+                NestedInteger temp = q.poll();
+                if (temp.isInteger()) {
+                    levelSum += temp.getInteger();
+                }
+                else {
+                    List<NestedInteger> list = temp.getList();
+                    for (int j = 0; j < list.size(); j++) {
+                        q.offer(list.get(j));
+                    }
+                }
+            }
+            prev += levelSum;
+            total += prev;
+        }
+        return total;
+    }
+
+#3. Use hashMap to one way DFS
+    class Solution {
+        HashMap<Integer, Integer> map;
+        int maxDepth = 1;
+        public int depthSumInverse(List<NestedInteger> nestedList) {
+            map = new HashMap<>();
+            DFS(nestedList, 1);
+            int total = 0;
+            for (Integer i: map.keySet()) {
+                total += map.get(i) * (maxDepth + 1 - i);
+            }
+            return total;
+        }
+
+        public void DFS(List<NestedInteger> nestedList, int depth) {
+            if (nestedList == null) {
+                return;
+            }
+            for (int i = 0; i < nestedList.size(); i++) {
+                NestedInteger temp = nestedList.get(i);
+                if (temp.isInteger()) {
+                    if (!map.containsKey(depth)) {
+                        map.put(depth, temp.getInteger());
+                    }
+                    else {
+                        map.put(depth, map.get(depth) + temp.getInteger());
+                    }
+                }
+                else {
+                    DFS(temp.getList(), depth + 1);
+                }
+            }
+            maxDepth = Math.max(maxDepth, depth);
+        }
+    }
